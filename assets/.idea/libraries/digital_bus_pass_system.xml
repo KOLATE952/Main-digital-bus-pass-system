@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="digital_bus_pass_system">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/digital_bus_pass_system.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

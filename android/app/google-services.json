@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "259186338366",
+    "project_id": "digital-bus-pass-system-f17c9",
+    "storage_bucket": "digital-bus-pass-system-f17c9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259186338366:android:7244725f73df2977a2bf6f",
+        "android_client_info": {
+          "package_name": "com.example.digital_bus_pass_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv8BGuXB18PINRj4ETlB9ecYcI4sk3sEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

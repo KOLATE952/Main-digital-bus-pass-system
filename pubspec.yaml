@@ -1,0 +1,46 @@
+name: digital_bus_pass_system
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.2
+  google_maps_flutter: ^2.5.0
+  geolocator: ^13.0.4
+  http: ^1.3.0
+  provider: ^6.1.2
+  shared_preferences: ^2.5.2
+  intl: ^0.19.0
+  flutter_localizations:
+    sdk: flutter
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+
+  assets:
+    - assets/pmt bus.png
+    - assets/translations/en.json
+    - assets/translations/hi.json
+    - assets/translations/mr.json
+    - assets/translations/bn.json
+    - assets/translations/kn.json
+    - assets/translations/ml.json
+    - assets/translations/pa.json
+    - assets/translations/ta.json
+    - assets/translations/te.json
+    - assets/translations/kok.json # Corrected the path to the asset

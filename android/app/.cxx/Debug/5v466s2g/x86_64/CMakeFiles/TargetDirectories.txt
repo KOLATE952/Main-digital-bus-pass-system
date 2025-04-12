@@ -1,0 +1,2 @@
+C:/Users/sanga/StudioProjects/Digital-bus-pass-system-main/android/app/.cxx/Debug/5v466s2g/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/sanga/StudioProjects/Digital-bus-pass-system-main/android/app/.cxx/Debug/5v466s2g/x86_64/CMakeFiles/rebuild_cache.dir
