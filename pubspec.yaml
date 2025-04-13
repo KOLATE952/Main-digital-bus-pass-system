@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_pdfview: ^1.2.7
+  path_provider: ^2.1.1
   cupertino_icons: ^1.0.8
   firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
@@ -43,4 +45,5 @@ flutter:
     - assets/translations/pa.json
     - assets/translations/ta.json
     - assets/translations/te.json
-    - assets/translations/kok.json # Corrected the path to the asset
+    - assets/translations/kok.json
+    - assets/timetable.pdf  # Corrected the path to the asset
