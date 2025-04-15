@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.digital_bus_pass_system.app-mergeDebugResources-50:/values-sw/values-sw.xml",
+            "outputFile": "com.example.digital_bus_pass_system.app-mergeDebugResources-52:/values-sw/values-sw.xml",
             "map": [
                 {
                     "source": "C:\\Users\\sanga\\.gradle\\caches\\transforms-3\\0939d2c468695df6f6d44659f6dcbe56\\transformed\\jetified-play-services-base-18.3.0\\res\\values-sw\\values.xml",
@@ -86,6 +86,23 @@
                         "startOffsets": "4773",
                         "endColumns": "145",
                         "endOffsets": "4914"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\sanga\\.gradle\\caches\\transforms-3\\f63137da39e9b022c26dee3bbc3d904f\\transformed\\jetified-play-services-wallet-18.1.3\\res\\values-sw\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "202",
+                        "endColumns": "83",
+                        "endOffsets": "285"
+                    },
+                    "to": {
+                        "startLines": "69",
+                        "startColumns": "4",
+                        "startOffsets": "7368",
+                        "endColumns": "87",
+                        "endOffsets": "7451"
                     }
                 },
                 {

@@ -1,8 +1,25 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.digital_bus_pass_system.app-mergeDebugResources-50:/values-hr/values-hr.xml",
+            "outputFile": "com.example.digital_bus_pass_system.app-mergeDebugResources-52:/values-hr/values-hr.xml",
             "map": [
+                {
+                    "source": "C:\\Users\\sanga\\.gradle\\caches\\transforms-3\\f63137da39e9b022c26dee3bbc3d904f\\transformed\\jetified-play-services-wallet-18.1.3\\res\\values-hr\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "202",
+                        "endColumns": "73",
+                        "endOffsets": "275"
+                    },
+                    "to": {
+                        "startLines": "69",
+                        "startColumns": "4",
+                        "startOffsets": "7296",
+                        "endColumns": "77",
+                        "endOffsets": "7369"
+                    }
+                },
                 {
                     "source": "C:\\Users\\sanga\\.gradle\\caches\\transforms-3\\cabe9b0952abc8d14c707ee467497c64\\transformed\\appcompat-1.1.0\\res\\values-hr\\values-hr.xml",
                     "from": {

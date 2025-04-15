@@ -36,6 +36,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:digital_bus_pass_system/login_screen.dart';
 import 'package:digital_bus_pass_system/localizations/app_localizations.dart';
 import 'package:digital_bus_pass_system/localizations/localization_delegate.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +59,6 @@ class _MyAppState extends State<MyApp> {
       _locale = locale;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
