@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+// import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RouteTimetableScreen extends StatefulWidget {
@@ -39,15 +39,17 @@ class _RouteTimetableScreenState extends State<RouteTimetableScreen> {
         title: const Text("Route Timetable"),
         backgroundColor: Colors.teal,
       ),
-      body: localPath == null
-          ? const Center(child: CircularProgressIndicator())
-          : PDFView(
-        filePath: localPath!,
-        enableSwipe: true,
-        swipeHorizontal: false,
-        autoSpacing: true,
-        pageFling: true,
-      ),
+      body:
+      // localPath == null
+      //     ?
+      const Center(child: CircularProgressIndicator())
+      //     // : PDFView(
+      //   filePath: localPath!,
+      //   enableSwipe: true,
+      //   swipeHorizontal: false,
+      //   autoSpacing: true,
+      //   pageFling: true,
+      // ),
     );
   }
 }

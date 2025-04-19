@@ -2,7 +2,7 @@ name: digital_bus_pass_system
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.6.1
@@ -10,14 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_pdfview: ^1.2.7
+#  flutter_pdfview: ^1.2.7
   path_provider: ^2.1.1
-  cupertino_icons: ^1.0.8
   firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
-  google_maps_flutter: ^2.5.0
-  geolocator: ^13.0.4
-  http: ^1.3.0
+  google_maps_flutter: ^2.12.1
+  geolocator: ^14.0.0
+#  google_maps_webservice: ^0.0.20-nullsafety
+#  flutter_google_places: ^0.3.0
+  http: ^1.2.1
   provider: ^6.1.2
   shared_preferences: ^2.5.2
   intl: ^0.19.0
@@ -25,6 +26,10 @@ dependencies:
   fluttertoast: ^8.2.12
   flutter_localizations:
     sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_polyline_points: ^2.1.0
+  location: ^8.0.0
+  flutter_svg: ^2.0.17
 
 
 dev_dependencies:
@@ -37,7 +42,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/pmt bus.png
+    - assets/
+    - assets/pin_source.png
+    - assets/pin_destination.png
+    - assets/pin_Badge.png
+    - assets/pmt_bus.png
     - assets/translations/en.json
     - assets/translations/hi.json
     - assets/translations/mr.json

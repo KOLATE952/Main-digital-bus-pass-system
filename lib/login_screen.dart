@@ -25,7 +25,7 @@
 //                     Image(
 //                       height: 100,
 //                       width: 100,
-//                       image: AssetImage('assets/pmt bus.png'),
+//                       image: AssetImage('assets/pmt_bus.png'),
 //                     ),
 //                     SizedBox(width: 8),
 //                   ],
@@ -278,7 +278,7 @@
 //                     Image(
 //                       height: 100,
 //                       width: 100,
-//                       image: AssetImage('assets/pmt bus.png'),
+//                       image: AssetImage('assets/pmt_bus.png'),
 //                     ),
 //                     SizedBox(width: 8),
 //                   ],
@@ -526,7 +526,7 @@
 //                   Image(
 //                     height: 100,
 //                     width: 100,
-//                     image: AssetImage('assets/pmt bus.png'),
+//                     image: AssetImage('assets/pmt_bus.png'),
 //                   ),
 //                   SizedBox(width: 8),
 //                 ],
@@ -788,7 +788,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Image(
                     height: 100,
                     width: 100,
-                    image: AssetImage('assets/pmt bus.png'),
+                    image: AssetImage('assets/pmt_bus.png'),
                   ),
                   SizedBox(width: 8),
                 ],

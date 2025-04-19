@@ -7,10 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Bus Ticket/daily_pass_screen.dart';
 import 'Bus Ticket/monthly_pass.dart';
 import 'Bus Ticket/view_ticket_screen.dart';
+import 'gmap_screen.dart';
 import 'notification_screen.dart';
 import 'profile_screen.dart';
 import 'Bus Ticket/bus_pass_form.dart';
-import 'map_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -192,7 +192,7 @@ class HomeScreen extends StatelessWidget {
               leading: const Icon(Icons.map, color: Colors.blue),
               title: Text(tr.translate('google_map')), // ✅
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => GMapPage()));
               },
             ),
           ],
