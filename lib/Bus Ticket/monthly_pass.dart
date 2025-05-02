@@ -9,7 +9,9 @@ class MonthlyPassScreen extends StatefulWidget {
 class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
   String selectedPassType = "Only PMC - ₹40.0";
   final TextEditingController _idController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Key for form validation
+  final _formKey = GlobalKey<FormState>();
+
+  get selectedMonthlyPassAmount => null; // Key for form validation
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,13 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                         if (_formKey.currentState!.validate()) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => PaymentScreen()),
+                          //   MaterialPageRoute(builder: (context) => PaymentScreen()),
+                          //
+                            MaterialPageRoute(
+                                builder:
+                                    (context) => PaymentScreen(amount: selectedMonthlyPassAmount.toString())
+                            ),
+
                           );
                         }
                       },

@@ -13,6 +13,7 @@ dependencies:
 #  flutter_pdfview: ^1.2.7
   path_provider: ^2.1.1
   firebase_core: ^3.13.0
+  cloud_firestore: ^5.6.7
   firebase_auth: ^5.5.2
   google_maps_flutter: ^2.12.1
   geolocator: ^14.0.0
@@ -44,9 +45,9 @@ flutter:
 
   assets:
     - assets/
-    - assets/pin_source.png
-    - assets/pin_destination.png
-    - assets/pin_Badge.png
+#    - assets/pin_source.png
+#    - assets/pin_destination.png
+#    - assets/pin_Badge.png
     - assets/pmt_bus.png
     - assets/translations/en.json
     - assets/translations/hi.json

@@ -192,6 +192,8 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
   final TextEditingController _idController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  get selectedAmount => null;
+
   @override
   Widget build(BuildContext context) {
     String formattedDateTime = _getFormattedDateTime();
@@ -292,12 +294,19 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => PaymentScreen(amount: selectedPassPrice),
+                        //   ),
+                        // );
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PaymentScreen(amount: selectedPassPrice),
-                          ),
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PaymentScreen(amount: selectedAmount.toString())
+                            )
                         );
+
                       }
                     },
                     style: ElevatedButton.styleFrom(
