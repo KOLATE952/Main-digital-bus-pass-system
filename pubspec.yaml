@@ -59,4 +59,5 @@ flutter:
     - assets/translations/ta.json
     - assets/translations/te.json
     - assets/translations/kok.json
-    - assets/timetable.pdf  # Corrected the path to the asset
+    - assets/timetable.pdf
+    - assets/bus logo.png  # Corrected the path to the asset

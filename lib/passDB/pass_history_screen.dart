@@ -1,69 +1,95 @@
-// TODO Implement this library.
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class PassHistoryScreen extends StatelessWidget {
-  // Sample list of past passes (this would ideally come from your Firebase or database)
-  final List<Map<String, String>> pastPasses = [
-    {
-      'date': '2025-04-30',
-      'route': 'Katraj To KJEI Campus',
-      'time': '9:30 AM',
-      'type': 'Daily Pass',
-    },
-    {
-      'date': '2025-04-29',
-      'route': 'KJEI Campus To Katraj',
-      'time': '6:45 PM',
-      'type': 'Monthly Pass',
-    },
-    {
-      'date': '2025-04-28',
-      'route': 'KJEI Campus To Iskon Temple',
-      'time': '4:00 PM',
-      'type': 'Daily Pass',
-    },
-  ];
+  const PassHistoryScreen({Key? key}) : super(key: key);
+
+  String formatTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    return DateFormat('dd MMM yyyy – hh:mm a').format(dateTime);
+  }
+
+  bool isPassExpired(Timestamp timestamp) {
+    final now = DateTime.now();
+    return timestamp.toDate().isBefore(now);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pass History'),
+        title: const Text('Pass History'),
         backgroundColor: Colors.teal,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: pastPasses.length,
-        itemBuilder: (context, index) {
-          final pass = pastPasses[index];
-          return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            elevation: 5,
-            margin: EdgeInsets.symmetric(vertical: 8),
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pass['type'] ?? '',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: firestore.collection('passHistory').orderBy('timestamp', descending: true).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return const Center(child: CircularProgressIndicator());
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+            return const Center(child: Text("No pass history available."));
+
+          final passDocs = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: passDocs.length,
+            itemBuilder: (context, index) {
+              final pass = passDocs[index].data() as Map<String, dynamic>;
+              final timestamp = pass['timestamp'] as Timestamp?;
+              final isExpired = timestamp == null ? false : isPassExpired(timestamp);
+              final statusText = isExpired ? "INVALID" : "VALID";
+              final statusColor = isExpired ? Colors.red : Colors.green;
+
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.teal.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.teal, width: 1.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Status
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/bus logo.png',
+                          height: 40,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          statusText,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: statusColor,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text("Date: ${pass['date']}"),
-                  Text("Time: ${pass['time']}"),
-                  Text("Route: ${pass['route']}"),
-                ],
-              ),
-            ),
+                    const SizedBox(height: 10),
+
+                    if (timestamp != null)
+                      Text("Issued On: ${formatTimestamp(timestamp)}"),
+                    Text("From: ${pass['boardingStop'] ?? ''}"),
+                    Text("To: ${pass['destinationStop'] ?? ''}"),
+                    Text("Route: ${pass['route'] ?? ''}"),
+                    Text("Payment: ${pass['paymentMethod'] ?? ''}"),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
     );
   }
 }
+
