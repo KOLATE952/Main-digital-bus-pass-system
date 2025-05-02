@@ -29,7 +29,7 @@ class PassHistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pass History'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.teal,
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
@@ -51,7 +51,7 @@ class PassHistoryScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                      color: Colors.teal,
                     ),
                   ),
                   SizedBox(height: 8),

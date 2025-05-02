@@ -7,15 +7,15 @@ class MonthlyPassScreen extends StatefulWidget {
 }
 
 class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
-  String selectedPassType = "Only PMC - ₹40.0";
+  String selectedPassType = "Student pass - ₹750.0";
+  double selectedPassPrice = 750.0;
+
   final TextEditingController _idController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  get selectedMonthlyPassAmount => null; // Key for form validation
-
   @override
   Widget build(BuildContext context) {
-    String formattedDateTime = _getFormattedDateTime(); // Fetch current date & time
+    String formattedDateTime = _getFormattedDateTime();
 
     return Scaffold(
       appBar: AppBar(
@@ -47,18 +47,17 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Form(
-                key: _formKey, // Assign form key
+                key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Select pass type",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const Text("Select pass type", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
 
-                    _buildPassOption("Student pass - ₹750.0"),
-                    _buildPassOption("Senior citizen pass - ₹500.0"),
-                    _buildPassOption("Passenger monthly pass ONLY PMC - ₹900.0"),
-                    _buildPassOption("Passenger monthly pass PMC & PCMC - ₹1200.0"),
+                    _buildPassOption("Student pass - ₹750.0", 750.0),
+                    _buildPassOption("Senior citizen pass - ₹500.0", 500.0),
+                    _buildPassOption("Passenger monthly pass ONLY PMC - ₹900.0", 900.0),
+                    _buildPassOption("Passenger monthly pass PMC & PCMC - ₹1200.0", 1200.0),
 
                     const SizedBox(height: 20),
 
@@ -72,7 +71,7 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your card number';
-                        } else if (value.length != 4) {
+                        } else if (!RegExp(r'^\d{4}$').hasMatch(value)) {
                           return 'Enter exactly 4 digits';
                         }
                         return null;
@@ -80,10 +79,10 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: "1234",
+                        counterText: "",
                       ),
                     ),
 
-                    // Warning Message
                     Container(
                       padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.only(top: 10),
@@ -95,8 +94,14 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                     ),
 
                     const SizedBox(height: 20),
-                    const Text("AMOUNT PAYABLE",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text("AMOUNT PAYABLE", style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+
+                    // Display Selected Price
+                    Text(
+                      "₹${selectedPassPrice.toStringAsFixed(2)}",
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
 
                     const SizedBox(height: 20),
 
@@ -106,20 +111,15 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                         if (_formKey.currentState!.validate()) {
                           Navigator.push(
                             context,
-                          //   MaterialPageRoute(builder: (context) => PaymentScreen()),
-                          //
                             MaterialPageRoute(
-                                builder:
-                                    (context) => PaymentScreen(amount: selectedMonthlyPassAmount.toString())
+                              builder: (context) => PaymentScreen(amount: selectedPassPrice.toString()),
                             ),
-
                           );
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 30),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
                       ),
                       child: const Text(
                         "Pay",
@@ -136,13 +136,11 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
     );
   }
 
-  // Get current date & time
   String _getFormattedDateTime() {
     DateTime now = DateTime.now();
     return "${now.day} ${_getMonthName(now.month)}, ${now.year} | ${_formatTime(now)}";
   }
 
-  // Format time
   String _formatTime(DateTime time) {
     int hour = time.hour;
     String period = hour >= 12 ? "PM" : "AM";
@@ -151,7 +149,6 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
     return "$hour:$minute $period";
   }
 
-  // Get month name
   String _getMonthName(int month) {
     List<String> months = [
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -160,12 +157,12 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
     return months[month - 1];
   }
 
-  // Widget for Pass Type Selection
-  Widget _buildPassOption(String passType) {
+  Widget _buildPassOption(String passType, double price) {
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedPassType = passType;
+          selectedPassPrice = price;
         });
       },
       child: Container(
