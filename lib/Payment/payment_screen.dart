@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PaymentScreen extends StatefulWidget {
-  final String amount; // Accepting 'amount' as String
+  final String amount;
+  final String from;
+  final String to;
+  final String passType;
+  final int ticketCount;
+  final String? validTill; // <-- Added the validTill parameter
 
-  const PaymentScreen({super.key, required this.amount});
+  const PaymentScreen({
+    super.key,
+    required this.amount,
+    required this.from,
+    required this.to,
+    required this.passType,
+    required this.ticketCount,
+    this.validTill, // <-- Added this to the constructor
+  });
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -23,15 +38,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
 
-    // Fix: use double parsing
     double parsedAmount = double.tryParse(widget.amount) ?? 0.0;
     amountInPaise = (parsedAmount * 100).toInt();
 
-    Future.delayed(Duration.zero, () {
-      if (amountInPaise > 0) openCheckout();
-    });
+    // Only initiate checkout if amount is greater than 0
+    if (amountInPaise > 0) {
+      Future.delayed(Duration.zero, openCheckout);
+    }
   }
-
 
   @override
   void dispose() {
@@ -40,17 +54,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   void openCheckout() {
+    final user = FirebaseAuth.instance.currentUser;
+    String userEmail = user?.email ?? 'test@gmail.com'; // Use user's email if available
+    String userContact = '0000000000'; // Replace with actual user's contact if available
+
     var options = {
-      'key': 'rzp_test_u398WOok1QQ6cG', // Replace with your live key for production
+      'key': 'rzp_test_u398WOok1QQ6cG', // Your Razorpay key
       'amount': amountInPaise,
       'name': 'Digital Bus Pass App',
       'description': 'Bus Pass Payment',
       'prefill': {
-        'contact': '0000000000', // You can replace this dynamically
-        'email': 'test@gmail.com', // You can replace this dynamically
+        'contact': userContact,
+        'email': userEmail,
       },
       'external': {
-        'wallets': ['paytm'],
+        'wallets': ['paytm'], // Add other wallets if needed
       },
     };
 
@@ -61,18 +79,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 
-  void handlePaymentSuccess(PaymentSuccessResponse response) {
+  void handlePaymentSuccess(PaymentSuccessResponse response) async {
+    await storePassData(
+      from: widget.from,
+      to: widget.to,
+      passType: widget.passType,
+      ticketCount: widget.ticketCount,
+      paymentAmount: double.tryParse(widget.amount) ?? 0.0,
+      paymentId: response.paymentId ?? 'unknown',
+      validTill: widget.validTill, // <-- Pass the validTill parameter here
+    );
+
     Fluttertoast.showToast(
-      msg: "✅ Payment Successful: ${response.paymentId}",
+      msg: "\u2705 Payment Successful: ${response.paymentId}",
       backgroundColor: Colors.green,
       textColor: Colors.white,
     );
-    Navigator.pop(context); // Navigate back after successful payment
+
+    Navigator.pop(context);
   }
 
   void handlePaymentError(PaymentFailureResponse response) {
     Fluttertoast.showToast(
-      msg: "❌ Payment Failed: ${response.message}",
+      msg: "\u274C Payment Failed: ${response.message ?? 'Unknown error'}",
       backgroundColor: Colors.red,
       textColor: Colors.white,
     );
@@ -80,7 +109,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void handleExternalWallet(ExternalWalletResponse response) {
     Fluttertoast.showToast(
-      msg: "🔗 External Wallet: ${response.walletName}",
+      msg: "\ud83d\udd17 External Wallet: ${response.walletName}",
       backgroundColor: Colors.blue,
       textColor: Colors.white,
     );
@@ -136,3 +165,39 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 }
+
+Future<void> storePassData({
+  required String from,
+  required String to,
+  required String passType,
+  required int ticketCount,
+  required double paymentAmount,
+  required String paymentId,
+  String? validTill, // <-- Added validTill here as a parameter
+}) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final purchaseDateTime = DateTime.now();
+  final validityDateTime = validTill != null
+      ? DateTime.parse(validTill) // Use the provided validTill if available
+      : passType == 'Monthly'
+      ? purchaseDateTime.add(Duration(days: 30))
+      : purchaseDateTime.add(Duration(days: 1));
+
+  await FirebaseFirestore.instance
+      .collection('passHistory')
+      .doc(user.uid)
+      .collection('passes')
+      .add({
+    'from': from,
+    'to': to,
+    'passType': passType,
+    'ticketCount': ticketCount,
+    'paymentAmount': paymentAmount,
+    'purchaseDateTime': purchaseDateTime.toIso8601String(),
+    'validityDateTime': validityDateTime.toIso8601String(),
+    'paymentId': paymentId,
+  });
+}
+

@@ -9,7 +9,7 @@ class MonthlyPassScreen extends StatefulWidget {
 class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
   String selectedPassType = "Student pass - ₹750.0";
   double selectedPassPrice = 750.0;
-
+  int selectedTicketCount = 1;
   final TextEditingController _idController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -31,7 +31,7 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Date and Time
+            // Current Date & Time
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -43,28 +43,28 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
               ),
             ),
 
-            // Pass Selection
+            // Form & UI
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Select pass type", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Select pass type", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
 
-                    _buildPassOption("Student pass - ₹750.0", 750.0),
-                    _buildPassOption("Senior citizen pass - ₹500.0", 500.0),
-                    _buildPassOption("Passenger monthly pass ONLY PMC - ₹900.0", 900.0),
-                    _buildPassOption("Passenger monthly pass PMC & PCMC - ₹1200.0", 1200.0),
+                  _buildPassOption("Student pass - ₹750.0", 750.0),
+                  _buildPassOption("Senior citizen pass - ₹500.0", 500.0),
+                  _buildPassOption("Passenger monthly pass ONLY PMC - ₹900.0", 900.0),
+                  _buildPassOption("Passenger monthly pass PMC & PCMC - ₹1200.0", 1200.0),
 
-                    const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                    // Aadhar / PAN Input
-                    const Text("Enter last 4 digits of your Aadhar Card or Pan Card"),
-                    const SizedBox(height: 5),
-                    TextFormField(
+                  const Text("Enter last 4 digits of your Aadhar Card or Pan Card"),
+                  const SizedBox(height: 5),
+
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
                       controller: _idController,
                       keyboardType: TextInputType.number,
                       maxLength: 4,
@@ -82,37 +82,45 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                         counterText: "",
                       ),
                     ),
+                  ),
 
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.only(top: 10),
-                      color: Colors.orange.shade100,
-                      child: const Text(
-                        "You should have a valid ID with the above details.",
-                        style: TextStyle(color: Colors.orange, fontSize: 14),
-                      ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    color: Colors.orange.shade100,
+                    child: const Text(
+                      "You should have a valid ID with the above details.",
+                      style: TextStyle(color: Colors.orange, fontSize: 14),
                     ),
+                  ),
 
-                    const SizedBox(height: 20),
-                    const Text("AMOUNT PAYABLE", style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
-                    // Display Selected Price
-                    Text(
-                      "₹${selectedPassPrice.toStringAsFixed(2)}",
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
-                    ),
+                  const Text("AMOUNT PAYABLE", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
 
-                    const SizedBox(height: 20),
+                  Text(
+                    "₹${selectedPassPrice.toStringAsFixed(2)}",
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                  ),
 
-                    // Payment Button
-                    ElevatedButton(
+                  const SizedBox(height: 20),
+
+                  // Payment Button
+                  Center(
+                    child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PaymentScreen(amount: selectedPassPrice.toString()),
+                              builder: (context) => PaymentScreen(
+                                amount: selectedPassPrice.toString(),
+                                from: 'StartLocation', // Replace with actual start location
+                                to: 'EndLocation',     // Replace with actual end location
+                                passType: 'Monthly',
+                                ticketCount: selectedTicketCount,
+                              ),
                             ),
                           );
                         }
@@ -126,8 +134,8 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -136,11 +144,13 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
     );
   }
 
+  /// Get formatted date and time
   String _getFormattedDateTime() {
     DateTime now = DateTime.now();
     return "${now.day} ${_getMonthName(now.month)}, ${now.year} | ${_formatTime(now)}";
   }
 
+  /// Convert hour & minute to AM/PM format
   String _formatTime(DateTime time) {
     int hour = time.hour;
     String period = hour >= 12 ? "PM" : "AM";
@@ -149,14 +159,16 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
     return "$hour:$minute $period";
   }
 
+  /// Convert month number to month name
   String _getMonthName(int month) {
-    List<String> months = [
+    const months = [
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
     return months[month - 1];
   }
 
+  /// Pass selection option
   Widget _buildPassOption(String passType, double price) {
     return GestureDetector(
       onTap: () {
@@ -174,10 +186,7 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(
-          passType,
-          style: const TextStyle(fontSize: 16),
-        ),
+        child: Text(passType, style: const TextStyle(fontSize: 16)),
       ),
     );
   }

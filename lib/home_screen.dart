@@ -137,7 +137,7 @@ class HomeScreen extends StatelessWidget {
                         () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ViewPassScreen(passDetails: 'no details yet')),
+                    MaterialPageRoute(builder: (context) => ViewPassScreen()),
                   );
                 }
                 ),

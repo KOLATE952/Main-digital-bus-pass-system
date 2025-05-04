@@ -1,53 +1,127 @@
 import 'package:flutter/material.dart';
-import 'package:digital_bus_pass_system/home_screen.dart';
-import 'package:digital_bus_pass_system/passDB/pass_history_screen.dart'; // import the history screen
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ViewPassScreen extends StatelessWidget {
-  final String passDetails;
+class ViewPassScreen extends StatefulWidget {
+  @override
+  _ViewPassScreenState createState() => _ViewPassScreenState();
+}
 
-  const ViewPassScreen({Key? key, required this.passDetails}) : super(key: key);
+class _ViewPassScreenState extends State<ViewPassScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: const Text('Your Pass'),
+        backgroundColor: Colors.green,
+        title: const Text('View Passes'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Pass Details:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
+      body: SafeArea(
+        child: FutureBuilder(
+          future: _fetchUserPasses(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              // Only show passDetails if it's not empty or "no details yet"
-              if (passDetails.trim().isNotEmpty && passDetails != 'no details yet')
-                Text(
-                  passDetails,
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PassHistoryScreen()),
-                  );
-                },
-                child: const Text("View Pass History"),
-              ),
-            ],
-          ),
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No passes found.'));
+            }
+
+            List<Map<String, dynamic>> passes = snapshot.data!;
+
+            return ListView.builder(
+              padding: const EdgeInsets.only(bottom: 20), // Ensures space at the end
+              itemCount: passes.length,
+              itemBuilder: (context, index) {
+                var pass = passes[index];
+                DateTime validityDateTime = DateTime.parse(pass['validityDateTime']);
+                bool isValid = validityDateTime.isAfter(DateTime.now());
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  elevation: 4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF8E1), // Off-white background
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Top row with logo and validity
+                        Row(
+                          children: [
+                            Image.asset(
+                              'assets/bus logo.png',
+                              width: 50,
+                              height: 50,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.directions_bus, size: 50);
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              isValid ? 'Valid' : 'Invalid',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isValid ? Colors.green : Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        // Route information
+                        Text(
+                          'From: ${pass['from']} - To: ${pass['to']}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Additional details
+                        Text('Pass Type: ${pass['passType']}'),
+                        Text('Ticket Count: ${pass['ticketCount']}'),
+                        Text('Payment Amount: ₹${pass['paymentAmount']}'),
+                        Text('Purchased on: ${pass['purchaseDateTime']}'),
+                        Text('Valid Till: ${pass['validityDateTime']}'),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchUserPasses() async {
+    final user = _auth.currentUser;
+    if (user == null) return [];
+
+    try {
+      final snapshot = await _firestore
+          .collection('passHistory')
+          .doc(user.uid)
+          .collection('passes')
+          .get();
+
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    } catch (e) {
+      print('Error fetching passes: $e');
+      return [];
+    }
   }
 }
