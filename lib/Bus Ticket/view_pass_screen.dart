@@ -15,7 +15,7 @@ class _ViewPassScreenState extends State<ViewPassScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.teal,
         title: const Text('View Passes'),
       ),
       body: SafeArea(
