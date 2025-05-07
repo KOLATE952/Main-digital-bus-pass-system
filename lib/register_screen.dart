@@ -489,12 +489,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     obscureText: false,
                   ),
                   SizedBox(height: 20),
-                  _buildTextField(
-                    controller: ageController,
-                    label: "Age",
-                    hintText: "Enter Age",
-                    obscureText: false,
-                  ),
+                  // _buildTextField(
+                  //   controller: ageController,
+                  //   label: "Age",
+                  //   hintText: "Enter Age",
+                  //   obscureText: false,
+                  // ),
                   SizedBox(height: 40),
                   Center(
                     child: SizedBox(
