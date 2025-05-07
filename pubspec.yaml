@@ -13,6 +13,7 @@ dependencies:
 #  flutter_pdfview: ^1.2.7
   path_provider: ^2.1.1
   firebase_core: ^3.13.0
+  cloud_firestore: ^5.6.7
   firebase_auth: ^5.5.2
   google_maps_flutter: ^2.12.1
   geolocator: ^14.0.0
@@ -31,6 +32,7 @@ dependencies:
   flutter_polyline_points: ^2.1.0
   location: ^8.0.0
   flutter_svg: ^2.0.17
+  firebase_database: ^11.3.5
 
 
 dev_dependencies:
@@ -44,9 +46,9 @@ flutter:
 
   assets:
     - assets/
-    - assets/pin_source.png
-    - assets/pin_destination.png
-    - assets/pin_Badge.png
+#    - assets/pin_source.png
+#    - assets/pin_destination.png
+#    - assets/pin_Badge.png
     - assets/pmt_bus.png
     - assets/translations/en.json
     - assets/translations/hi.json
@@ -58,4 +60,5 @@ flutter:
     - assets/translations/ta.json
     - assets/translations/te.json
     - assets/translations/kok.json
-    - assets/timetable.pdf  # Corrected the path to the asset
+    - assets/timetable.pdf
+    - assets/bus logo.png  # Corrected the path to the asset

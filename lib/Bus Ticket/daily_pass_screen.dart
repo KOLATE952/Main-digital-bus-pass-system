@@ -8,12 +8,14 @@ class DailyPassScreen extends StatefulWidget {
 
 class _DailyPassScreenState extends State<DailyPassScreen> {
   String selectedPassType = "Only PMC - ₹40.0";
+  double selectedPassPrice = 40.0;
   final TextEditingController _idController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Added form key for validation
+  final _formKey = GlobalKey<FormState>();
+  int selectedTicketCount = 1;
 
   @override
   Widget build(BuildContext context) {
-    String formattedDateTime = _getFormattedDateTime(); // Fetch current date & time
+    String formattedDateTime = _getFormattedDateTime();
 
     return Scaffold(
       appBar: AppBar(
@@ -49,20 +51,17 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
                 children: [
                   const Text("Select pass type", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-
-                  _buildPassOption("Only PMC - ₹40.0"),
-                  _buildPassOption("Only PCMC - ₹40.0"),
-                  _buildPassOption("PMC and PCMC - ₹50.0"),
-                  _buildPassOption("All Routes - ₹120.0"),
-
+                  _buildPassOption("Only PMC - ₹40.0", 40.0),
+                  _buildPassOption("Only PCMC - ₹40.0", 40.0),
+                  _buildPassOption("PMC and PCMC - ₹50.0", 50.0),
+                  _buildPassOption("All Routes - ₹120.0", 120.0),
                   const SizedBox(height: 20),
 
                   // Aadhar / PAN Input
                   const Text("Enter last 4 digits of your Aadhar Card or Pan Card"),
                   const SizedBox(height: 5),
-
                   Form(
-                    key: _formKey, // Form for validation
+                    key: _formKey,
                     child: TextFormField(
                       controller: _idController,
                       keyboardType: TextInputType.number,
@@ -93,19 +92,37 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
                       style: TextStyle(color: Colors.orange, fontSize: 14),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-                  const Text("AMOUNT PAYABLE", style: TextStyle(fontWeight: FontWeight.bold)),
 
+                  const Text("AMOUNT PAYABLE", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+
+                  // Display Selected Price
+                  Text(
+                    "₹${selectedPassPrice.toStringAsFixed(2)}",
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                  ),
                   const SizedBox(height: 20),
 
                   // Payment Button
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        DateTime now = DateTime.now();
+                        DateTime validTill = now.add(const Duration(hours: 24)); // 24-hour validity
+
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => PaymentScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => PaymentScreen(
+                              amount: selectedPassPrice.toString(),
+                              from: 'StartLocation',  // Replace if dynamic
+                              to: 'EndLocation',      // Replace if dynamic
+                              passType: 'Daily',
+                              ticketCount: selectedTicketCount,
+                              validTill: validTill.toIso8601String(), // Pass as string
+                            ),
+                          ),
                         );
                       }
                     },
@@ -127,13 +144,12 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
     );
   }
 
-  // Get current date & time
+  // Date and Time
   String _getFormattedDateTime() {
     DateTime now = DateTime.now();
     return "${now.day} ${_getMonthName(now.month)}, ${now.year} | ${_formatTime(now)}";
   }
 
-  // Format time
   String _formatTime(DateTime time) {
     int hour = time.hour;
     String period = hour >= 12 ? "PM" : "AM";
@@ -142,7 +158,6 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
     return "$hour:$minute $period";
   }
 
-  // Get month name
   String _getMonthName(int month) {
     List<String> months = [
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -151,12 +166,13 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
     return months[month - 1];
   }
 
-  // Widget for Pass Type Selection
-  Widget _buildPassOption(String passType) {
+  // Pass Option Widget
+  Widget _buildPassOption(String passType, double price) {
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedPassType = passType;
+          selectedPassPrice = price;
         });
       },
       child: Container(
