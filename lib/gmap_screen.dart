@@ -85,13 +85,14 @@ class _GMapPageState extends State<GMapPage> {
 
   void getPolyPoints() async {
     if (sourceLocation != null && destination != null) {
-      PolylinePoints polylinePoints = PolylinePoints(apiKey: google_api_key);
+      PolylinePoints polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        request: PolylineRequest(
-          origin: PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
+          googleApiKey:google_api_key,
+          request: PolylineRequest(
+            origin: PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
           destination: PointLatLng(destination!.latitude, destination!.longitude),
           transitMode: TravelMode.driving.name, mode: TravelMode.driving, // Accessing the name property of the enum
-        )@
+        )
       );
 
       // ... rest of your getPolyPoints(
