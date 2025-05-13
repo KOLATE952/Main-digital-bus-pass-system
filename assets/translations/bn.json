@@ -11,10 +11,12 @@
   "metro_ticket": "মেট্রো টিকিট",
   "near_me": "আমার কাছাকাছি",
   "google_map": "গুগল ম্যাপ",
+
+
   "ticket_details": "টিকিট বিবরণ",
-  "select_route": "রুট নির্বাচন করুন অথবা লিখুন",
-  "starting_stop": "শুরুর স্টপ",
-  "ending_stop": "শেষ স্টপ",
+  "select_or_enter_route": "রুট নির্বাচন করুন অথবা লিখুন",
+  "enter_starting_stop": "শুরুর স্টপ",
+  "enter_destination_stop": "শেষ স্টপ",
   "by_fare": "ভাড়ার দ্বারা",
   "by_ending_stop": "শেষ স্টপ দ্বারা",
   "ticket_price": "টিকিট মূল্য",
@@ -23,5 +25,22 @@
   "half": "অর্ধেক",
   "pay_using": "ব্যবহার করে প্রদান করুন",
   "others": "অন্যান্য",
-  "pay": "প্রদান করুন"
+  "pay": "প্রদান করুন",
+
+  "select_pass_type": "পাসের ধরন নির্বাচন করুন",
+  "only_pmc- ₹40.0": "শুধু PMC - ₹40.0",
+  "only_pcmc- ₹ 40.0": "শুধু PCMC - ₹40.0",
+  "pmc_pcmc -₹50.0": "PMC + PCMC - ₹50.0",
+  "all_routes-₹120.0": "সব রুট - ₹120.0",
+  "Enter last 4 digits of your Aadhar Card or Pan Card": "আপনার আধার বা প্যান কার্ডের শেষ ৪টি সংখ্যা লিখুন",
+  "Please enter your card number": "দয়া করে আপনার কার্ড নম্বর লিখুন",
+  "Enter exactly 4 digits": "সঠিক ৪টি সংখ্যা লিখুন",
+  "1234": "১২৩৪",
+  "You should have a valid ID with the above details.": "উপরোক্ত তথ্য সহ একটি বৈধ পরিচয়পত্র থাকতে হবে।",
+  "amount_payable": "প্রদেয় অর্থ",
+
+  "student_pass - ₹750.0": "ছাত্র পাস - ₹750.0",
+  "senior_citizen_pass- ₹500.0": "জ্যেষ্ঠ নাগরিক পাস - ₹500.0",
+  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "যাত্রী মাসিক পাস শুধুমাত্র PMC - ₹900.0",
+  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "যাত্রী মাসিক পাস PMC ও PCMC - ₹1200.0"
 }

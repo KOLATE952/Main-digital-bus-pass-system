@@ -11,10 +11,12 @@
   "metro_ticket": "Metro Ticket",
   "near_me": "Near Me",
   "google_map": "Google Map",
+
+
   "ticket_details": "Ticket Details",
-  "select_route": "Select or enter route",
-  "starting_stop": "Starting stop",
-  "ending_stop": "Ending stop",
+  "select_or_enter_route": "Select or enter route",
+  "enter_starting_stop": "Starting stop",
+  "enter_destination_stop": "Ending stop",
   "by_fare": "By Fare",
   "by_ending_stop": "By Ending stop",
   "ticket_price": "Ticket Price",
@@ -23,5 +25,23 @@
   "half": "Half",
   "pay_using": "Pay Using",
   "others": "Others",
-  "pay": "Pay"
+  "pay": "Pay",
+
+  "select_pass_type": "Select Pass Type",
+  "only_pmc- ₹40.0": "Only PMC - ₹40.0",
+  "only_pcmc- ₹ 40.0": "Only PCMC - ₹40.0",
+  "pmc_pcmc -₹50.0": "PMC + PCMC - ₹50.0",
+  "all_routes-₹120.0": "All Routes - ₹120.0",
+  "Enter last 4 digits of your Aadhar Card or Pan Card": "Enter last 4 digits of your Aadhar Card or Pan Card",
+  "Please enter your card number": "Please enter your card number",
+  "Enter exactly 4 digits": "Enter exactly 4 digits",
+  "1234": "1234",
+  "You should have a valid ID with the above details.": "You should have a valid ID with the above details.",
+  "amount_payable": "Amount Payable",
+
+  "student_pass - ₹750.0": "student pass-₹750.0",
+  "senior_citizen_pass- ₹500.0": "senior citizen pass-₹500.0",
+  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "Passenger monthly pass ONLY PMC- ₹900.0",
+  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "Passenger monthly pass PMC & PCMC- ₹1200.0"
+
 }

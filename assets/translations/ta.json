@@ -11,10 +11,12 @@
   "metro_ticket": "மெட்ரோ டிக்கெட்",
   "near_me": "என்னிடம் அருகில்",
   "google_map": "கூகுள் மேப்",
+
+
   "ticket_details": "டிக்கெட் விவரங்கள்",
-  "select_route": "மார்க்கத்தை தேர்வுசெய் அல்லது உள்ளிடு",
-  "starting_stop": "தொடக்க நிறுத்தம்",
-  "ending_stop": "முடிவு நிறுத்தம்",
+  "select_or_enter_route": "மார்க்கத்தை தேர்வுசெய் அல்லது உள்ளிடு",
+  "enter_starting_stop": "தொடக்க நிறுத்தம்",
+  "enter_destination_stop": "முடிவு நிறுத்தம்",
   "by_fare": "கட்டணத்தின் மூலம்",
   "by_ending_stop": "முடிவு நிறுத்தத்தின் மூலம்",
   "ticket_price": "டிக்கெட் விலை",
@@ -23,5 +25,22 @@
   "half": "அரை",
   "pay_using": "பயன்படுத்து செலுத்த",
   "others": "மற்றவை",
-  "pay": "செலுத்து"
+  "pay": "செலுத்து",
+
+  "select_pass_type": "பாஸ் வகையைத் தேர்ந்தெடுக்கவும்",
+  "only_pmc- ₹40.0": "PMC மட்டும் - ₹40.0",
+  "only_pcmc- ₹ 40.0": "PCMC மட்டும் - ₹40.0",
+  "pmc_pcmc -₹50.0": "PMC + PCMC - ₹50.0",
+  "all_routes-₹120.0": "அனைத்து வழிகளும் - ₹120.0",
+  "Enter last 4 digits of your Aadhar Card or Pan Card": "உங்கள் ஆதார்/பான் கார்டின் கடைசி 4 இலக்கங்களை உள்ளிடவும்",
+  "Please enter your card number": "தயவுசெய்து உங்கள் கார்ட் எண்ணை உள்ளிடவும்",
+  "Enter exactly 4 digits": "சரியாக 4 இலக்கங்கள் உள்ளிடவும்",
+  "1234": "1234",
+  "You should have a valid ID with the above details.": "மேலே உள்ள விவரங்களுடன் சரியான அடையாள அட்டை இருக்க வேண்டும்.",
+  "amount_payable": "செலுத்த வேண்டிய தொகை",
+
+  "student_pass - ₹750.0": "மாணவர் பாஸ் - ₹750.0",
+  "senior_citizen_pass- ₹500.0": "மூத்த குடிமக்கள் பாஸ் - ₹500.0",
+  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "பயணிகள் மாத பாஸ் PMC மட்டும் - ₹900.0",
+  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "பயணிகள் மாத பாஸ் PMC & PCMC - ₹1200.0"
 }

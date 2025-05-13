@@ -3,7 +3,7 @@
   "proceed": "पुढे जा",
   "home": "मुख्यपृष्ठ",
   "bus_ticket": "बस तिकीट",
-  "daily_pass": "दैनिक पास",
+  "daily_pass": "दैनंदिन पास",
   "monthly_pass": "मासिक पास",
   "view_ticket": "तिकीट पहा",
   "view_pass": "पास पहा",
@@ -11,10 +11,11 @@
   "metro_ticket": "मेट्रो तिकीट",
   "near_me": "माझ्या जवळ",
   "google_map": "गूगल नकाशा",
+
   "ticket_details": "तिकीट तपशील",
-  "select_route": "मार्ग निवडा किंवा प्रविष्ट करा",
-  "starting_stop": "सुरुवातीचे थांबे",
-  "ending_stop": "शेवटचे थांबे",
+  "select_or_enter_route": "मार्ग निवडा किंवा प्रविष्ट करा",
+  "enter_starting_stop": "सुरुवातीचे थांबे",
+  "enter_destination_stop": "शेवटचे थांबे",
   "by_fare": "भाड्यानुसार",
   "by_ending_stop": "शेवटच्या थांब्यानुसार",
   "ticket_price": "तिकीट किंमत",
@@ -23,5 +24,22 @@
   "half": "अर्धे",
   "pay_using": "देयक मार्ग",
   "others": "इतर",
-  "pay": "भरणा करा"
+  "pay": "शुल्क भरा",
+
+  "select_pass_type": "पासचा प्रकार निवडा",
+  "only_pmc- ₹40.0": "फक्त PMC - ₹40.0",
+  "only_pcmc- ₹ 40.0": "फक्त PCMC - ₹40.0",
+  "pmc_pcmc -₹50.0": "PMC + PCMC - ₹50.0",
+  "all_routes-₹120.0": "सर्व मार्ग - ₹120.0",
+  "Enter last 4 digits of your Aadhar Card or Pan Card": "आधार किंवा पॅन कार्डचे शेवटचे 4 अंक टाका",
+  "Please enter your card number": "कृपया तुमचा कार्ड क्रमांक टाका",
+  "Enter exactly 4 digits": "अचूक 4 अंक टाका",
+  "1234": "1234",
+  "You should have a valid ID with the above details.": "वर दिलेल्या तपशीलांसह वैध ओळखपत्र असणे आवश्यक आहे.",
+  "amount_payable": "देय रक्कम",
+
+  "student_pass - ₹750.0": "विद्यार्थी पास - ₹750.0",
+  "senior_citizen_pass- ₹500.0": "ज्येष्ठ नागरिक पास - ₹500.0",
+  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "प्रवासी मासिक पास फक्त PMC - ₹900.0",
+  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "प्रवासी मासिक पास PMC व PCMC - ₹1200.0"
 }

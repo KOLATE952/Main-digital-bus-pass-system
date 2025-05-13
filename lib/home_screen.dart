@@ -504,7 +504,7 @@ import 'package:flutter/material.dart';
 import 'package:digital_bus_pass_system/localizations/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Bus Ticket/daily_pass_screen.dart';
+import 'package:digital_bus_pass_system/Bus%20Ticket/daily_pass_screen.dart';
 import 'Bus Ticket/monthly_pass.dart';
 import 'Bus Ticket/view_ticket_screen.dart';
 import 'gmap_screen.dart';

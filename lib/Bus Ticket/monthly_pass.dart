@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:digital_bus_pass_system/Payment/payment_screen.dart';
+import 'package:digital_bus_pass_system/localizations/app_localizations.dart';
 
 class MonthlyPassScreen extends StatefulWidget {
   @override
@@ -15,12 +16,13 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalization.of(context)!;
     String formattedDateTime = _getFormattedDateTime();
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: const Text("Monthly Pass"),
+        title: Text(tr.translate("Monthly Pass")),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -49,17 +51,17 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Select pass type", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                   Text(tr.translate("Select pass type"), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
+                  _buildPassOption(tr.translate("Student_pass - ₹750.0")),
+                  _buildPassOption(tr.translate("Senior_citizen_pass - ₹500.0")),
+                  _buildPassOption(tr.translate("Passenger_monthly_pass_ONLY_PMC - ₹900.0")),
+                  _buildPassOption(tr.translate("Passenger_monthly_pass_PMC_&_PCMC - ₹1200.0")),
 
-                  _buildPassOption("Student pass - ₹750.0", 750.0),
-                  _buildPassOption("Senior citizen pass - ₹500.0", 500.0),
-                  _buildPassOption("Passenger monthly pass ONLY PMC - ₹900.0", 900.0),
-                  _buildPassOption("Passenger monthly pass PMC & PCMC - ₹1200.0", 1200.0),
 
                   const SizedBox(height: 20),
 
-                  const Text("Enter last 4 digits of your Aadhar Card or Pan Card"),
+                  Text(tr.translate("Enter last 4 digits of your Aadhar Card or Pan Card")),
                   const SizedBox(height: 5),
 
                   Form(
@@ -70,15 +72,15 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                       maxLength: 4,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your card number';
+                          return tr.translate('Please enter your card number');
                         } else if (!RegExp(r'^\d{4}$').hasMatch(value)) {
-                          return 'Enter exactly 4 digits';
+                          return tr.translate('Enter exactly 4 digits');
                         }
                         return null;
                       },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: "1234",
+                      decoration:  InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: tr.translate("1234"),
                         counterText: "",
                       ),
                     ),
@@ -88,15 +90,15 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     color: Colors.orange.shade100,
-                    child: const Text(
-                      "You should have a valid ID with the above details.",
+                    child: Text(
+                     tr.translate( "You should have a valid ID with the above details."),
                       style: TextStyle(color: Colors.orange, fontSize: 14),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  const Text("AMOUNT PAYABLE", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(tr.translate("AMOUNT PAYABLE"), style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
 
                   Text(
@@ -129,8 +131,8 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
                         backgroundColor: Colors.green,
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
                       ),
-                      child: const Text(
-                        "Pay",
+                      child:Text(
+                        tr.translate("Pay"),
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
@@ -169,11 +171,17 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
   }
 
   /// Pass selection option
-  Widget _buildPassOption(String passType, double price) {
+  // Widget _buildPassOption(String passType, double price) {
+  Widget _buildPassOption(String passWithPrice) {
+    // Try splitting by " - ₹" or handle any whitespace differences
+    List<String> parts = passWithPrice.split(RegExp(r"\s*-\s*₹"));
+    String type = parts[0];
+    double price = parts.length > 1 ? double.tryParse(parts[1].replaceAll("₹", "").trim()) ?? 0.0 : 0.0;
+
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedPassType = passType;
+          selectedPassType = passWithPrice;
           selectedPassPrice = price;
         });
       },
@@ -182,11 +190,11 @@ class _MonthlyPassScreenState extends State<MonthlyPassScreen> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          color: selectedPassType == passType ? Colors.blue.withOpacity(0.2) : Colors.white,
+          color: selectedPassType == passWithPrice ? Colors.blue.withOpacity(0.2) : Colors.white,
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(passType, style: const TextStyle(fontSize: 16)),
+        child: Text(passWithPrice, style: const TextStyle(fontSize: 16)),
       ),
     );
   }
