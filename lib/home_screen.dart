@@ -605,7 +605,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildFeatureCard(
                   context,
                   Icons.account_box,
-                  tr.translate('monthly_pass'),
+                  tr.translate('Monthly_pass'),
                       () {
                     Navigator.push(
                       context,

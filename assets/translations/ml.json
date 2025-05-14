@@ -1,10 +1,8 @@
 {
-  "select_language": "നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക",
-  "proceed": "തുടരുക",
   "home": "ഹോം",
   "bus_ticket": "ബസ് ടിക്കറ്റ്",
   "daily_pass": "ദിനപാസ്",
-  "monthly_pass": "മാസ പാസ്",
+  "Monthly_pass": "മാസ പാസ്",
   "view_ticket": "ടിക്കറ്റ് കാണുക",
   "view_pass": "പാസ് കാണുക",
   "route_timetable": "റൂട്ട് ടൈംടേബിൾ",
@@ -39,8 +37,8 @@
   "You should have a valid ID with the above details.": "മുകളിൽ നൽകിയ വിവരങ്ങളോട് കൂടിയ സാധുവായ ഐഡി ഉണ്ടാകണം.",
   "amount_payable": "അടയ്ക്കേണ്ട തുക",
 
-  "student_pass - ₹750.0": "വിദ്യാർത്ഥി പാസ് - ₹750.0",
-  "senior_citizen_pass- ₹500.0": "വയോജ്ഞർ പാസ് - ₹500.0",
-  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "യാത്രക്കാർ മാസിക പാസ് PMC മാത്രം - ₹900.0",
-  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "യാത്രക്കാർ മാസിക പാസ് PMC & PCMC - ₹1200.0"
+  "Student_pass - ₹750.0": "വിദ്യാർത്ഥി പാസ് - ₹750.0",
+  "Senior_citizen_pass- ₹500.0": "വയോജ്ഞർ പാസ് - ₹500.0",
+  "Passenger_pass_ONLY_PMC- ₹900.0": "യാത്രക്കാർ  പാസ് PMC മാത്രം - ₹900.0",
+  "Passenger_Pass_pmc_pcmc- ₹1200.0": "യാത്രക്കാർ  പാസ് PMC + PCMC - ₹1200.0"
 }

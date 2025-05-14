@@ -1,10 +1,8 @@
 {
-  "select_language": "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
-  "proceed": "ਅੱਗੇ ਵਧੋ",
   "home": "ਹੋਮ",
   "bus_ticket": "ਬੱਸ ਟਿਕਟ",
   "daily_pass": "ਰੋਜ਼ਾਨਾ ਪਾਸ",
-  "monthly_pass": "ਮਾਸਿਕ ਪਾਸ",
+  "Monthly_pass": "ਮਾਸਿਕ ਪਾਸ",
   "view_ticket": "ਟਿਕਟ ਵੇਖੋ",
   "view_pass": "ਪਾਸ ਵੇਖੋ",
   "route_timetable": "ਰੂਟ ਟਾਈਮਟੇਬਲ",
@@ -39,8 +37,8 @@
   "You should have a valid ID with the above details.": "ਉਪਰ ਦਿੱਤੇ ਵੇਰਵਿਆਂ ਨਾਲ ਤੁਹਾਡੇ ਕੋਲ ਠੀਕ ID ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ।",
   "amount_payable": "ਭੁਗਤਾਨਯੋਗ ਰਕਮ",
 
-  "student_pass - ₹750.0": "ਵਿਦਿਆਰਥੀ ਪਾਸ - ₹750.0",
-  "senior_citizen_pass- ₹500.0": "ਸੀਨੀਅਰ ਸਿਟੀਜ਼ਨ ਪਾਸ - ₹500.0",
-  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "ਯਾਤਰੀ ਮਹੀਨਾਵਾਰ ਪਾਸ ਕੇਵਲ PMC - ₹900.0",
-  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "ਯਾਤਰੀ ਮਹੀਨਾਵਾਰ ਪਾਸ PMC ਅਤੇ PCMC - ₹1200.0"
+  "Student_pass - ₹750.0": "ਵਿਦਿਆਰਥੀ ਪਾਸ - ₹750.0",
+  "Senior_citizen_pass- ₹500.0": "ਸੀਨੀਅਰ ਸਿਟੀਜ਼ਨ ਪਾਸ - ₹500.0",
+  "Passenger_pass_ONLY_PMC- ₹900.0": "ਯਾਤਰੀ  ਪਾਸ ਕੇਵਲ PMC - ₹900.0",
+  "Passenger_Pass_pmc_pcmc- ₹1200.0": "ਯਾਤਰੀ  ਪਾਸ PMC + PCMC - ₹1200.0"
 }

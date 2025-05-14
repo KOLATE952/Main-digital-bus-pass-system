@@ -1,10 +1,8 @@
 {
-  "select_language": "আপনার ভাষা নির্বাচন করুন",
-  "proceed": "এগিয়ে যান",
   "home": "হোম",
   "bus_ticket": "বাস টিকিট",
   "daily_pass": "প্রতিদিনের পাস",
-  "monthly_pass": "মাসিক পাস",
+  "Monthly_pass": "মাসিক পাস",
   "view_ticket": "টিকিট দেখুন",
   "view_pass": "পাস দেখুন",
   "route_timetable": "রুট সময়সূচী",
@@ -39,8 +37,8 @@
   "You should have a valid ID with the above details.": "উপরোক্ত তথ্য সহ একটি বৈধ পরিচয়পত্র থাকতে হবে।",
   "amount_payable": "প্রদেয় অর্থ",
 
-  "student_pass - ₹750.0": "ছাত্র পাস - ₹750.0",
-  "senior_citizen_pass- ₹500.0": "জ্যেষ্ঠ নাগরিক পাস - ₹500.0",
-  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "যাত্রী মাসিক পাস শুধুমাত্র PMC - ₹900.0",
-  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "যাত্রী মাসিক পাস PMC ও PCMC - ₹1200.0"
+  "Student_pass - ₹750.0": "ছাত্র পাস - ₹750.0",
+  "Senior_citizen_pass- ₹500.0": "জ্যেষ্ঠ নাগরিক পাস - ₹500.0",
+  "Passenger_pass_ONLY_PMC- ₹900.0": "যাত্রী  পাস শুধুমাত্র PMC - ₹900.0",
+  "Passenger_Pass_pmc_pcmc- ₹1200.0": "যাত্রী  পাস PMC + PCMC - ₹1200.0"
 }

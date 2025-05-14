@@ -1,10 +1,8 @@
 {
-  "select_language": "Select Your Language",
-  "proceed": "Proceed",
   "home": "Home",
   "bus_ticket": "Bus Ticket",
   "daily_pass": "Daily Pass",
-  "monthly_pass": "monthly pass",
+  "Monthly_pass": "Monthly pass",
   "view_ticket": "View Ticket",
   "view_pass": "View Pass",
   "route_timetable": "Route Timetable",
@@ -28,9 +26,9 @@
   "pay": "Pay",
 
   "select_pass_type": "Select Pass Type",
-  "only_pmc- ₹40.0": "Only PMC - ₹40.0",
-  "only_pcmc- ₹ 40.0": "Only PCMC - ₹40.0",
-  "pmc_pcmc -₹50.0": "PMC + PCMC - ₹50.0",
+  "only_pmc- ₹40.0": "Only pmc - ₹40.0",
+  "only_pcmc- ₹ 40.0": "Only pcmc - ₹40.0",
+  "pmc_pcmc -₹50.0": "pmc + pcmc - ₹50.0",
   "all_routes-₹120.0": "All Routes - ₹120.0",
   "Enter last 4 digits of your Aadhar Card or Pan Card": "Enter last 4 digits of your Aadhar Card or Pan Card",
   "Please enter your card number": "Please enter your card number",
@@ -39,9 +37,9 @@
   "You should have a valid ID with the above details.": "You should have a valid ID with the above details.",
   "amount_payable": "Amount Payable",
 
-  "student_pass - ₹750.0": "student pass-₹750.0",
-  "senior_citizen_pass- ₹500.0": "senior citizen pass-₹500.0",
-  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "Passenger monthly pass ONLY PMC- ₹900.0",
-  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "Passenger monthly pass PMC & PCMC- ₹1200.0"
+  "Student_pass - ₹750.0": "student pass-₹750.0",
+  "Senior_citizen_pass - ₹500.0": "senior citizen pass-₹500.0",
+  "Passenger_pass_ONLY_PMC - ₹900.0": "Passenger  pass ONLY PMC- ₹900.0",
+  "Passenger_Pass_pmc_pcmc - ₹1200.0": "Passenger  pass PMC + PCMC-₹1200.0"
 
 }

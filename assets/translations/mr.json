@@ -1,10 +1,8 @@
 {
-  "select_language": "तुमची भाषा निवडा",
-  "proceed": "पुढे जा",
   "home": "मुख्यपृष्ठ",
   "bus_ticket": "बस तिकीट",
   "daily_pass": "दैनंदिन पास",
-  "monthly_pass": "मासिक पास",
+  "Monthly_pass": "मासिक पास",
   "view_ticket": "तिकीट पहा",
   "view_pass": "पास पहा",
   "route_timetable": "मार्ग वेळापत्रक",
@@ -38,8 +36,8 @@
   "You should have a valid ID with the above details.": "वर दिलेल्या तपशीलांसह वैध ओळखपत्र असणे आवश्यक आहे.",
   "amount_payable": "देय रक्कम",
 
-  "student_pass - ₹750.0": "विद्यार्थी पास - ₹750.0",
-  "senior_citizen_pass- ₹500.0": "ज्येष्ठ नागरिक पास - ₹500.0",
-  "passenger_monthly_pass_ONLY_PMC- ₹900.0": "प्रवासी मासिक पास फक्त PMC - ₹900.0",
-  "passenger_monthly_pass_PMC_&_PCMC- ₹1200.0": "प्रवासी मासिक पास PMC व PCMC - ₹1200.0"
+  "Student_pass - ₹750.0": "विद्यार्थी पास - ₹750.0",
+  "Senior_citizen_pass - ₹500.0": "ज्येष्ठ नागरिक पास - ₹500.0",
+  "Passenger_pass_ONLY_PMC - ₹900.0": "प्रवासी पास फक्त PMC - ₹900.0",
+  "Passenger_Pass_pmc_pcmc - ₹1200.0": "प्रवासी पास PMC+PCMC - ₹1200.0"
 }
