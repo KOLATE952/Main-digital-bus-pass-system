@@ -32,9 +32,6 @@ dependencies:
   flutter_polyline_points: ^2.1.0
   location: ^8.0.0
   flutter_svg: ^2.0.17
-  firebase_database: ^11.3.5
-  speech_to_text: ^7.0.0   # For speech input
-  flutter_tts: ^4.2.2     # For text-to-speech
 
 
 dev_dependencies:

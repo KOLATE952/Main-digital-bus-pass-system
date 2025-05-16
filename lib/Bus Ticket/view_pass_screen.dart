@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ViewPassScreen extends StatefulWidget {
   @override
@@ -10,38 +11,75 @@ class ViewPassScreen extends StatefulWidget {
 class _ViewPassScreenState extends State<ViewPassScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+
+  DateTime parseTimestamp(dynamic timestamp) {
+    // Handle Timestamp or String or null safely
+    if (timestamp == null) return DateTime.now();
+    if (timestamp is Timestamp) return timestamp.toDate();
+    if (timestamp is String) {
+      try {
+        return DateTime.parse(timestamp);
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+    return DateTime.now();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = _auth.currentUser;
+    if (user == null) {
+      // User not logged in
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
+          title: const Text('View Passes'),
+        ),
+        body: const Center(
+          child: Text('Please log in to view your passes.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: const Text('View Passes'),
       ),
       body: SafeArea(
-        child: FutureBuilder(
-          future: _fetchUserPasses(),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _firestore
+              .collection('passHistory')
+              .doc(user.uid)
+              .collection('passes')
+              .orderBy('purchaseDateTime', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
 
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return const Center(child: Text('No passes found.'));
             }
 
-            List<Map<String, dynamic>> passes = snapshot.data!;
+            final passes = snapshot.data!.docs;
 
             return ListView.builder(
-              padding: const EdgeInsets.only(bottom: 20), // Ensures space at the end
+              padding: const EdgeInsets.only(bottom: 20),
               itemCount: passes.length,
               itemBuilder: (context, index) {
-                var pass = passes[index];
-                DateTime validityDateTime = DateTime.parse(pass['validityDateTime']);
+                final passData = passes[index].data() as Map<String, dynamic>;
+
+                DateTime validityDateTime = parseTimestamp(passData['validityDateTime']);
+                DateTime purchaseDateTime = parseTimestamp(passData['purchaseDateTime']);
+
                 bool isValid = validityDateTime.isAfter(DateTime.now());
 
                 return Card(
@@ -50,14 +88,13 @@ class _ViewPassScreenState extends State<ViewPassScreen> {
                   elevation: 4,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF8E1), // Off-white background
+                      color: const Color(0xFFFFF8E1),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Top row with logo and validity
                         Row(
                           children: [
                             Image.asset(
@@ -80,21 +117,19 @@ class _ViewPassScreenState extends State<ViewPassScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        // Route information
                         Text(
-                          'From: ${pass['from']} - To: ${pass['to']}',
+                          'From: ${passData['from'] ?? 'N/A'} - To: ${passData['to'] ?? 'N/A'}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        // Additional details
-                        Text('Pass Type: ${pass['passType']}'),
-                        Text('Ticket Count: ${pass['ticketCount']}'),
-                        Text('Payment Amount: ₹${pass['paymentAmount']}'),
-                        Text('Purchased on: ${pass['purchaseDateTime']}'),
-                        Text('Valid Till: ${pass['validityDateTime']}'),
+                        Text('Pass Type: ${passData['passType'] ?? 'N/A'}'),
+                        Text('Ticket Count: ${passData['ticketCount'] ?? 'N/A'}'),
+                        Text('Payment Amount: ₹${passData['paymentAmount'] ?? 'N/A'}'),
+                        Text('Purchased on: ${dateFormat.format(purchaseDateTime)}'),
+                        Text('Valid Till: ${dateFormat.format(validityDateTime)}'),
                       ],
                     ),
                   ),
@@ -105,23 +140,5 @@ class _ViewPassScreenState extends State<ViewPassScreen> {
         ),
       ),
     );
-  }
-
-  Future<List<Map<String, dynamic>>> _fetchUserPasses() async {
-    final user = _auth.currentUser;
-    if (user == null) return [];
-
-    try {
-      final snapshot = await _firestore
-          .collection('passHistory')
-          .doc(user.uid)
-          .collection('passes')
-          .get();
-
-      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-    } catch (e) {
-      print('Error fetching passes: $e');
-      return [];
-    }
   }
 }
