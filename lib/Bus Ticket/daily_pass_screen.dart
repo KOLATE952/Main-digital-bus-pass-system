@@ -389,17 +389,9 @@
 //               ? Colors.blue.withOpacity(0.2)
 //               : Colors.white,
 //           border: Border.all(color: Colors.grey),
-//           borderRadius: BorderRadius.circular(10),
-//         ),
-//         child: Text(
-//           passType,
-//           style: const TextStyle(fontSize: 16),
-//         ),
-//       ),
-//     );
-//   }
-// }
+//
 
+import '../notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:digital_bus_pass_system/Payment/payment_screen.dart';
 import 'package:digital_bus_pass_system/localizations/app_localizations.dart';
@@ -515,8 +507,12 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
                   const SizedBox(height: 20),
 
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        await NotificationManager().addNotificationWithTitle(
+                          '✅ Pass Purchased',
+                          'You have successfully purchased your Daily bus pass.',
+                        );
                         DateTime now = DateTime.now();
                         DateTime validTill = now.add(const Duration(hours: 24));
 
@@ -530,6 +526,7 @@ class _DailyPassScreenState extends State<DailyPassScreen> {
                               passType: 'Daily',
                               ticketCount: selectedTicketCount,
                               validTill: validTill.toIso8601String(),
+                              isbuspass: true,
                             ),
                           ),
                         );

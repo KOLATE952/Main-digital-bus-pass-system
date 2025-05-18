@@ -140,7 +140,7 @@ class _MultilangScreenState extends State<MultilangScreen> {
     {'name': 'ಕನ್ನಡ', 'code': 'kn', 'flag': '🇮🇳'},
     {'name': 'മലയാളം', 'code': 'ml', 'flag': '🇮🇳'},
     {'name': 'ਪੰਜਾਬੀ', 'code': 'pa', 'flag': '🇮🇳'},
-    {'name': 'कोंकणी', 'code': 'kok', 'flag': '🇮🇳'},
+    // {'name': 'कोंकणी', 'code': 'kok', 'flag': '🇮🇳'},
   ];
 
   int? _selectedIndex;

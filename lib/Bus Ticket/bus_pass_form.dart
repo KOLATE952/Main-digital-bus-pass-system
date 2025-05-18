@@ -635,8 +635,10 @@ class _BusPassFormScreenState extends State<BusPassFormScreen> {
   }
 
   Future<void> _handleSubmit() async {
+    print("submitted");
     if (_formKey.currentState!.validate()) {
       final user = FirebaseAuth.instance.currentUser;
+      print(user);
       if (user != null) {
         final passData = {
           "userId": user.uid,
@@ -650,7 +652,7 @@ class _BusPassFormScreenState extends State<BusPassFormScreen> {
           "timestamp": FieldValue.serverTimestamp(),
         };
 
-        await FirebaseFirestore.instance.collection('passHistory').add(passData);
+        // await FirebaseFirestore.instance.collection('passHistory').add(passData);
 
         double totalAmount = (fullTickets * 15) + (halfTickets * 10);
 
@@ -663,6 +665,8 @@ class _BusPassFormScreenState extends State<BusPassFormScreen> {
               to: endStopController.text.trim(),
               passType: routeController.text.trim(),
               ticketCount: fullTickets + halfTickets,
+              isbuspass: false,
+
             ),
           ),
         );

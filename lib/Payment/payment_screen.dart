@@ -10,7 +10,8 @@ class PaymentScreen extends StatefulWidget {
   final String to;
   final String passType;
   final int ticketCount;
-  final String? validTill; // <-- Added the validTill parameter
+  final String? validTill;
+  final bool isbuspass; // <-- Added the validTill parameter
 
   const PaymentScreen({
     super.key,
@@ -19,7 +20,8 @@ class PaymentScreen extends StatefulWidget {
     required this.to,
     required this.passType,
     required this.ticketCount,
-    this.validTill, // <-- Added this to the constructor
+    this.validTill,
+    required this.isbuspass,// <-- Added this to the constructor
   });
 
   @override
@@ -87,7 +89,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ticketCount: widget.ticketCount,
       paymentAmount: double.tryParse(widget.amount) ?? 0.0,
       paymentId: response.paymentId ?? 'unknown',
-      validTill: widget.validTill, // <-- Pass the validTill parameter here
+      validTill: widget.validTill,
+      isbuspass: widget.isbuspass   // <-- Pass the validTill parameter here
     );
 
     Fluttertoast.showToast(
@@ -173,6 +176,7 @@ Future<void> storePassData({
   required int ticketCount,
   required double paymentAmount,
   required String paymentId,
+  required bool isbuspass,
   String? validTill, // <-- Added validTill here as a parameter
 }) async {
   final user = FirebaseAuth.instance.currentUser;
@@ -185,19 +189,35 @@ Future<void> storePassData({
       ? purchaseDateTime.add(Duration(days: 30))
       : purchaseDateTime.add(Duration(days: 1));
 
-  await FirebaseFirestore.instance
-      .collection('passHistory')
-      .doc(user.uid)
-      .collection('passes')
-      .add({
-    'from': from,
-    'to': to,
-    'passType': passType,
-    'ticketCount': ticketCount,
-    'paymentAmount': paymentAmount,
-    'purchaseDateTime': purchaseDateTime.toIso8601String(),
-    'validityDateTime': validityDateTime.toIso8601String(),
-    'paymentId': paymentId,
-  });
+  if(isbuspass==true){
+    await FirebaseFirestore.instance
+        .collection('passHistory')
+        .doc(user.uid)
+        .collection('passes')
+        .add({
+      'passType': passType,
+      'ticketCount': ticketCount,
+      'paymentAmount': paymentAmount,
+      'purchaseDateTime': purchaseDateTime.toIso8601String(),
+      'validityDateTime': validityDateTime.toIso8601String(),
+      'paymentId': paymentId,
+    });
+  }
+  else{
+    await FirebaseFirestore.instance
+        .collection('passHistory')
+        .doc(user.uid)
+        .collection('tickets')
+        .add({
+      'from': from,
+      'to': to,
+      'route': passType,
+      'ticketCount': ticketCount,
+      'paymentAmount': paymentAmount,
+      'purchaseDateTime': purchaseDateTime.toIso8601String(),
+      'validityDateTime': validityDateTime.toIso8601String(),
+      'paymentId': paymentId,
+    });
+  }
 }
 
