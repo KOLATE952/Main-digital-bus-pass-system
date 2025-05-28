@@ -187,7 +187,6 @@
 //     );
 //   }
 // }
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -223,10 +222,10 @@ class NotificationScreen extends StatelessWidget {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('passHistory')
+            .collection('passHistory') // corrected collection name
             .doc(user.uid)
-            .collection('Notifications')
-            .orderBy('purchaseDateTime', descending: true)
+            .collection('Notifications') // corrected subcollection name
+            .orderBy('timestamp', descending: true) // order by correct field
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -253,14 +252,14 @@ class NotificationScreen extends StatelessWidget {
           return ListView.builder(
             itemCount: notifications.length,
             itemBuilder: (context, index) {
-              final data = notifications[index].data() as Map<String, dynamic>?;
+              final data =
+              notifications[index].data() as Map<String, dynamic>?;
 
               if (data == null) return const SizedBox();
 
-              final title = data['title'] ?? 'Pass Expiry';
-              final message = data['message'] ??
-                  'Your monthly bus pass will expire in 2 days. Please renew it soon!';
-              final timestamp = data['purchaseDateTime'] as Timestamp?;
+              final title = data['title'] ?? 'Notification';
+              final message = data['message'] ?? '';
+              final timestamp = data['timestamp'] as Timestamp?;
               final dateTime = timestamp?.toDate();
 
               return Padding(
