@@ -36,7 +36,7 @@ dependencies:
   flutter_polyline_points: ^2.1.0
   location: ^8.0.0
   flutter_svg: ^2.0.17
-
+  badges: ^3.1.2
 
 dev_dependencies:
   flutter_test:
