@@ -37,6 +37,8 @@ dependencies:
   location: ^8.0.0
   flutter_svg: ^2.0.17
   badges: ^3.1.2
+#  flutter_local_notifications_linux: ^6.0.0
+
 
 dev_dependencies:
   flutter_test:
