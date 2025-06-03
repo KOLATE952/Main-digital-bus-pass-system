@@ -182,7 +182,7 @@ class _GMapPageState extends State<GMapPage> {
               _controller.complete(controller);
 
               // Delay camera animation to avoid channel error
-              Future.delayed(Duration(milliseconds: 500), () {
+              Future.delayed(Duration(milliseconds: 1000), () {
                 _mapController.animateCamera(
                   CameraUpdate.newCameraPosition(
                     CameraPosition(
