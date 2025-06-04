@@ -41,6 +41,28 @@ class _GMapPageState extends State<GMapPage> {
     super.initState();
     setCustomMarkerIcon();
     _getUserLocation();
+
+    // Hardcoded coordinates for Pune → Katraj
+    sourceLocation = LatLng(18.5204, 73.8567); // Pune
+    destination = LatLng(18.4676, 73.8508); // Katraj
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      markers.add(Marker(
+        markerId: MarkerId("source"),
+        position: sourceLocation!,
+        icon: sourceIcon,
+        infoWindow: InfoWindow(title: "Source (Pune)"),
+      ));
+
+      markers.add(Marker(
+        markerId: MarkerId("destination"),
+        position: destination!,
+        icon: destinationIcon,
+        infoWindow: InfoWindow(title: "Destination (Katraj)"),
+      ));
+
+      getPolyPoints();
+    });
   }
 
   Future<LatLng?> _getCoordinatesFromAddress(String address) async {
@@ -58,7 +80,6 @@ class _GMapPageState extends State<GMapPage> {
 
   void getPolyPoints() async {
     if (sourceLocation != null && destination != null) {
-      await Future.delayed(Duration(milliseconds: 200));
       PolylinePoints polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey: google_api_key,
@@ -70,12 +91,15 @@ class _GMapPageState extends State<GMapPage> {
       );
 
       if (result.points.isNotEmpty) {
+        print("Polyline found with ${result.points.length} points");
+
         polylineCoordinates = result.points.map((e) => LatLng(e.latitude, e.longitude)).toList();
         _createPolyline();
         _placeBusMarker();
         _moveCameraToFitBounds();
       } else {
         Fluttertoast.showToast(msg: "No route found.");
+        print("Polyline result empty: ${result.errorMessage}");
       }
     }
   }
@@ -96,6 +120,7 @@ class _GMapPageState extends State<GMapPage> {
   void _placeBusMarker() {
     if (polylineCoordinates.isNotEmpty) {
       LatLng busPos = polylineCoordinates[polylineCoordinates.length ~/ 2];
+      markers.removeWhere((m) => m.markerId == MarkerId("bus"));
       markers.add(
         Marker(
           markerId: MarkerId("bus"),
@@ -104,8 +129,8 @@ class _GMapPageState extends State<GMapPage> {
           infoWindow: InfoWindow(title: "Bus Location"),
         ),
       );
+      setState(() {});
     }
-    setState(() {});
   }
 
   void _moveCameraToFitBounds() async {
@@ -116,6 +141,7 @@ class _GMapPageState extends State<GMapPage> {
       } else {
         bounds = LatLngBounds(southwest: sourceLocation!, northeast: destination!);
       }
+
       final controller = await _controller.future;
       controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
     }
@@ -181,7 +207,6 @@ class _GMapPageState extends State<GMapPage> {
               _mapController = controller;
               _controller.complete(controller);
 
-              // Delay camera animation to avoid channel error
               Future.delayed(Duration(milliseconds: 1000), () {
                 _mapController.animateCamera(
                   CameraUpdate.newCameraPosition(
@@ -193,8 +218,6 @@ class _GMapPageState extends State<GMapPage> {
                 );
               });
             },
-
-
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
           ),
@@ -233,9 +256,7 @@ class _GMapPageState extends State<GMapPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 2))
-        ],
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 2))],
       ),
       child: TextField(
         controller: controller,
