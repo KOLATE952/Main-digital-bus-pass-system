@@ -5,8 +5,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
-import 'constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+// Replace with your actual API key here or import from constants.dart
+const String google_api_key = "AIzaSyCuJ95Ynset11JahQ96woXW5EM7S-d3BTo";
+const Color primaryColor = Color(0xFF7861FF);
 
 class GMapPage extends StatefulWidget {
   @override
@@ -17,14 +20,12 @@ class _GMapPageState extends State<GMapPage> {
   final Completer<GoogleMapController> _controller = Completer();
   late GoogleMapController _mapController;
 
-  final LatLng _defaultPosition = LatLng(18.5204, 73.8567); // Pune default
-  LatLng _currentPosition = LatLng(18.5204, 73.8567);
+  LatLng _currentPosition = LatLng(18.420652, 73.905094);
   LatLng? sourceLocation;
   LatLng? destination;
 
   List<LatLng> polylineCoordinates = [];
   Set<Polyline> polylines = {};
-  Set<Marker> markers = {};
 
   loc.Location location = loc.Location();
   loc.LocationData? currentLocation;
@@ -39,40 +40,54 @@ class _GMapPageState extends State<GMapPage> {
   @override
   void initState() {
     super.initState();
+    getCurrentLocation();
     setCustomMarkerIcon();
     _getUserLocation();
+  }
 
-    // Hardcoded coordinates for Pune → Katraj
-    sourceLocation = LatLng(18.5204, 73.8567); // Pune
-    destination = LatLng(18.4676, 73.8508); // Katraj
+  void getCurrentLocation() async {
+    currentLocation = await location.getLocation();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      markers.add(Marker(
-        markerId: MarkerId("source"),
-        position: sourceLocation!,
-        icon: sourceIcon,
-        infoWindow: InfoWindow(title: "Source (Pune)"),
-      ));
+    GoogleMapController googleMapController = await _controller.future;
 
-      markers.add(Marker(
-        markerId: MarkerId("destination"),
-        position: destination!,
-        icon: destinationIcon,
-        infoWindow: InfoWindow(title: "Destination (Katraj)"),
-      ));
-
-      getPolyPoints();
+    location.onLocationChanged.listen((newLoc) {
+      currentLocation = newLoc;
+      googleMapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            zoom: 15,
+            target: LatLng(newLoc.latitude!, newLoc.longitude!),
+          ),
+        ),
+      );
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
   Future<LatLng?> _getCoordinatesFromAddress(String address) async {
     try {
       var locations = await locationFromAddress(address);
-      return LatLng(locations.first.latitude, locations.first.longitude);
+      if (locations.isNotEmpty) {
+        return LatLng(locations.first.latitude, locations.first.longitude);
+      } else {
+        Fluttertoast.showToast(
+          msg: "Location not found: $address",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+        );
+        return null;
+      }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "Error finding location: $address",
+        msg: "Error geocoding: $address - $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
       );
       return null;
     }
@@ -81,26 +96,48 @@ class _GMapPageState extends State<GMapPage> {
   void getPolyPoints() async {
     if (sourceLocation != null && destination != null) {
       PolylinePoints polylinePoints = PolylinePoints();
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+
+      final request = DirectionsRequest(
+        origin: PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
+        destination: PointLatLng(destination!.latitude, destination!.longitude),
+        travelMode: TravelMode.driving,
+      );
+
+      final result = await polylinePoints.getRouteBetweenCoordinates(
         googleApiKey: google_api_key,
-        request: PolylineRequest(
-          origin: PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
-          destination: PointLatLng(destination!.latitude, destination!.longitude),
-          mode: TravelMode.driving,
-        ),
+        request: request,
       );
 
       if (result.points.isNotEmpty) {
-        print("Polyline found with ${result.points.length} points");
-
-        polylineCoordinates = result.points.map((e) => LatLng(e.latitude, e.longitude)).toList();
+        polylineCoordinates.clear();
+        for (var point in result.points) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        }
         _createPolyline();
-        _placeBusMarker();
-        _moveCameraToFitBounds();
+
+        // Animate camera to fit polyline route
+        final GoogleMapController controller = await _controller.future;
+        LatLngBounds bounds = _boundsFromLatLngList(polylineCoordinates);
+        controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 70));
+
+        setState(() {});
       } else {
-        Fluttertoast.showToast(msg: "No route found.");
-        print("Polyline result empty: ${result.errorMessage}");
+        Fluttertoast.showToast(
+          msg: "Could not find a route between the specified locations.",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orangeAccent,
+          textColor: Colors.white,
+        );
       }
+    } else {
+      Fluttertoast.showToast(
+        msg: "Please enter both source and destination.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.grey,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -114,69 +151,68 @@ class _GMapPageState extends State<GMapPage> {
         width: 6,
       ),
     );
-    setState(() {});
-  }
-
-  void _placeBusMarker() {
-    if (polylineCoordinates.isNotEmpty) {
-      LatLng busPos = polylineCoordinates[polylineCoordinates.length ~/ 2];
-      markers.removeWhere((m) => m.markerId == MarkerId("bus"));
-      markers.add(
-        Marker(
-          markerId: MarkerId("bus"),
-          position: busPos,
-          icon: currentLocationIcon,
-          infoWindow: InfoWindow(title: "Bus Location"),
-        ),
-      );
-      setState(() {});
-    }
-  }
-
-  void _moveCameraToFitBounds() async {
-    if (sourceLocation != null && destination != null) {
-      LatLngBounds bounds;
-      if (sourceLocation!.latitude > destination!.latitude) {
-        bounds = LatLngBounds(southwest: destination!, northeast: sourceLocation!);
-      } else {
-        bounds = LatLngBounds(southwest: sourceLocation!, northeast: destination!);
-      }
-
-      final controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
-    }
   }
 
   void setCustomMarkerIcon() {
     BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/pin_source.png")
-        .then((icon) => sourceIcon = icon);
+        .then((icon) => setState(() => sourceIcon = icon));
+
     BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/pin_destination.png")
-        .then((icon) => destinationIcon = icon);
+        .then((icon) => setState(() => destinationIcon = icon));
+
     BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/pmt_bus.png")
-        .then((icon) => currentLocationIcon = icon);
+        .then((icon) => setState(() => currentLocationIcon = icon));
   }
 
   Future<void> _getUserLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      permission = await Geolocator.requestPermission();
+    if (!serviceEnabled) {
+      Fluttertoast.showToast(
+        msg: "Please enable location services",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
     }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        Fluttertoast.showToast(
+          msg: "Location permission denied",
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Fluttertoast.showToast(
+        msg: "Location permissions are permanently denied",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
     Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-    });
+    if (mounted) {
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+      });
+
+      _mapController.animateCamera(
+        CameraUpdate.newLatLngZoom(_currentPosition, 15),
+      );
+    }
   }
 
   void _onSearch() async {
-    markers.clear();
     sourceLocation = await _getCoordinatesFromAddress(sourceController.text.trim());
     destination = await _getCoordinatesFromAddress(destinationController.text.trim());
 
     if (sourceLocation != null && destination != null) {
-      markers.add(Marker(markerId: MarkerId("source"), position: sourceLocation!, icon: sourceIcon));
-      markers.add(Marker(markerId: MarkerId("destination"), position: destination!, icon: destinationIcon));
       getPolyPoints();
     }
   }
@@ -184,7 +220,6 @@ class _GMapPageState extends State<GMapPage> {
   void _clearRoute() {
     setState(() {
       polylines.clear();
-      markers.clear();
       polylineCoordinates.clear();
       sourceLocation = null;
       destination = null;
@@ -193,30 +228,63 @@ class _GMapPageState extends State<GMapPage> {
     });
   }
 
+  LatLngBounds _boundsFromLatLngList(List<LatLng> list) {
+    double x0 = list[0].latitude;
+    double x1 = list[0].latitude;
+    double y0 = list[0].longitude;
+    double y1 = list[0].longitude;
+
+    for (LatLng latLng in list) {
+      if (latLng.latitude > x1) x1 = latLng.latitude;
+      if (latLng.latitude < x0) x0 = latLng.latitude;
+      if (latLng.longitude > y1) y1 = latLng.longitude;
+      if (latLng.longitude < y0) y0 = latLng.longitude;
+    }
+    return LatLngBounds(
+      northeast: LatLng(x1, y1),
+      southwest: LatLng(x0, y0),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Google Map Route'), backgroundColor: primaryColor),
+      appBar: AppBar(
+        title: Text('Google Map Route'),
+        backgroundColor: primaryColor,
+      ),
       body: Stack(
         children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(target: _currentPosition, zoom: 14),
+          currentLocation == null
+              ? const Center(child: CircularProgressIndicator())
+              : GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+              zoom: 15,
+            ),
             polylines: polylines,
-            markers: markers,
+            markers: {
+              Marker(
+                markerId: MarkerId("currentLocation"),
+                icon: currentLocationIcon,
+                position: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+              ),
+              if (sourceLocation != null)
+                Marker(
+                  markerId: MarkerId("source"),
+                  icon: sourceIcon,
+                  position: sourceLocation!,
+                ),
+              if (destination != null)
+                Marker(
+                  markerId: MarkerId("destination"),
+                  icon: destinationIcon,
+                  position: destination!,
+                ),
+            },
             onMapCreated: (controller) {
               _mapController = controller;
               _controller.complete(controller);
-
-              Future.delayed(Duration(milliseconds: 1000), () {
-                _mapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      target: _currentPosition,
-                      zoom: 14,
-                    ),
-                  ),
-                );
-              });
             },
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
@@ -227,21 +295,27 @@ class _GMapPageState extends State<GMapPage> {
             right: 15,
             child: Column(
               children: [
-                _buildTextField(sourceController, 'Enter source', Icons.location_on),
+                _buildTextField(sourceController, 'Enter source address', Icons.location_on),
                 SizedBox(height: 10),
-                _buildTextField(destinationController, 'Enter destination', Icons.location_pin),
+                _buildTextField(destinationController, 'Enter destination address', Icons.location_pin),
                 SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ElevatedButton(onPressed: _onSearch, child: Text("Get Route")),
+                    ElevatedButton(
+                      onPressed: _onSearch,
+                      child: Text("Get Route"),
+                    ),
                     ElevatedButton(
                       onPressed: _clearRoute,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
                       child: Text("Clear Route"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -256,12 +330,24 @@ class _GMapPageState extends State<GMapPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          )
+        ],
       ),
       child: TextField(
         controller: controller,
-        decoration: InputDecoration(hintText: hint, border: InputBorder.none, icon: Icon(icon)),
+        decoration: InputDecoration(
+          hintText: hint,
+          border: InputBorder.none,
+          icon: Icon(icon),
+        ),
       ),
     );
   }
+
+  DirectionsRequest({required PointLatLng origin, required PointLatLng destination, required TravelMode travelMode}) {}
 }
