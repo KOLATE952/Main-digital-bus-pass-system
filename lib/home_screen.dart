@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   Icons.route,
                   tr.translate('route_timetable'),
-                      () => Navigator.push(context, MaterialPageRoute(builder: (_) => RouteTimetableScreen(routeId:'' ))),
+                      () => Navigator.push(context, MaterialPageRoute(builder: (_) => RouteTimetableScreen(routeId:'route_1' ))),
                 ),
               ],
             ),
