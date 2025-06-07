@@ -2,83 +2,173 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class RouteTimetableScreen extends StatelessWidget {
-  final String routeId;
+class RouteTimetableScreen extends StatefulWidget {
+  const RouteTimetableScreen({Key? key}) : super(key: key);
 
-  const RouteTimetableScreen({Key? key, required this.routeId}) : super(key: key);
+  @override
+  _RouteTimetableScreenState createState() => _RouteTimetableScreenState();
+}
 
-  Future<Map<String, dynamic>> fetchRouteData(String routeId) async {
-    if (routeId.isEmpty) {
-      throw Exception("Route ID cannot be empty");
+class _RouteTimetableScreenState extends State<RouteTimetableScreen> {
+  String? selectedRouteId;
+  Map<String, dynamic>? selectedRouteData;
+  bool isLoading = false;
+  String? error;
+
+  final DateTime baseTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+    9,
+    0,
+  );
+
+  // Fetch all route documents
+  Future<List<QueryDocumentSnapshot>> fetchRoutes() async {
+    final snapshot = await FirebaseFirestore.instance.collection('routes').get();
+    return snapshot.docs;
+  }
+
+  Future<void> fetchSelectedRouteData(String routeId) async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
+    try {
+      final doc = await FirebaseFirestore.instance.collection('routes').doc(routeId).get();
+      if (doc.exists && doc.data() != null) {
+        setState(() {
+          selectedRouteData = doc.data();
+          selectedRouteId = routeId;
+        });
+      } else {
+        setState(() {
+          error = "Route not found for ID: $routeId";
+          selectedRouteData = null;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        error = "Failed to fetch route data: $e";
+        selectedRouteData = null;
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Widget buildRouteListTile(QueryDocumentSnapshot routeDoc) {
+    final data = routeDoc.data() as Map<String, dynamic>;
+    final routeName = data['name'] ?? routeDoc.id;
+
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: ListTile(
+        leading: const Icon(Icons.directions_bus),
+        title: Text(routeName),
+        onTap: () => fetchSelectedRouteData(routeDoc.id),
+        selected: selectedRouteId == routeDoc.id,
+        selectedTileColor: Colors.teal.shade50,
+      ),
+    );
+  }
+
+  Widget buildTimetableView() {
+    if (isLoading) return const CircularProgressIndicator();
+    if (error != null) {
+      return Text(error!, style: const TextStyle(color: Colors.red));
     }
 
-    final doc = await FirebaseFirestore.instance.collection('routes').doc(routeId).get();
-    if (doc.exists) {
-      return doc.data()!;
-    } else {
-      throw Exception("Route not found for ID: $routeId");
+    if (selectedRouteData == null) return const SizedBox.shrink();
+
+    final stopsRaw = selectedRouteData!['stops'];
+    if (stopsRaw == null || stopsRaw is! List) {
+      return const Text("Invalid stop data.");
     }
+
+    final stops = List<Map<String, dynamic>>.from(stopsRaw);
+    if (stops.isEmpty) {
+      return const Text("No stops found for this route.");
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const Text(
+          "Timetable",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        ListView.separated(
+          itemCount: stops.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          separatorBuilder: (context, index) => const Divider(),
+          itemBuilder: (context, index) {
+            final stop = stops[index];
+            final int offset = stop['arrival_offset_min'] ?? 0;
+            final DateTime arrivalTime = baseTime.add(Duration(minutes: offset));
+            final String formattedTime = DateFormat('hh:mm a').format(arrivalTime);
+
+            return ListTile(
+              leading: const Icon(Icons.location_on),
+              title: Text(stop['name'] ?? "Unknown Stop"),
+              subtitle: Text("Arrival Time: $formattedTime"),
+            );
+          },
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Check if routeId is empty right away and show error UI
-    if (routeId.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Route Timetable")),
-        body: const Center(child: Text("Error: Route ID cannot be empty")),
-      );
-    }
-
-    // Base time (change as needed)
-    final DateTime baseTime = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-      9,
-      0,
-    ); // 9:00 AM today
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Route Timetable"),
+        backgroundColor: Colors.teal,
       ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: fetchRouteData(routeId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder<List<QueryDocumentSnapshot>>(
+          future: fetchRoutes(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          }
+            if (snapshot.hasError) {
+              return Text("Error loading routes: ${snapshot.error}");
+            }
 
-          if (!snapshot.hasData) {
-            return const Center(child: Text("No data found"));
-          }
+            final routeDocs = snapshot.data ?? [];
+            if (routeDocs.isEmpty) {
+              return const Text("No routes available.");
+            }
 
-          final routeData = snapshot.data!;
-          final stops = List<Map<String, dynamic>>.from(routeData['stops']);
-
-          return ListView.separated(
-            itemCount: stops.length,
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, index) {
-              final stop = stops[index];
-              final arrivalOffsetMin = stop['arrival_offset_min'] as int;
-              final arrivalTime = baseTime.add(Duration(minutes: arrivalOffsetMin));
-              final formattedTime = DateFormat('hh:mm a').format(arrivalTime);
-
-              return ListTile(
-                leading: const Icon(Icons.location_on),
-                title: Text(stop['name']),
-                subtitle: Text("Arrival Time: $formattedTime"),
-              );
-            },
-          );
-        },
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Available Routes",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  ...routeDocs.map(buildRouteListTile).toList(),
+                  buildTimetableView(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
+
