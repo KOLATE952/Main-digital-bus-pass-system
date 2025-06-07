@@ -7,6 +7,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+
 // Replace with your actual API key here or import from constants.dart
 const String google_api_key = "AIzaSyCuJ95Ynset11JahQ96woXW5EM7S-d3BTo";
 const Color primaryColor = Color(0xFF7861FF);
@@ -95,7 +96,7 @@ class _GMapPageState extends State<GMapPage> {
 
   void getPolyPoints() async {
     if (sourceLocation != null && destination != null) {
-      PolylinePoints polylinePoints = PolylinePoints();
+      final polylinePoints = PolylinePoints();
 
       final request = DirectionsRequest(
         origin: PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
@@ -107,6 +108,12 @@ class _GMapPageState extends State<GMapPage> {
         googleApiKey: google_api_key,
         request: request,
       );
+
+
+      if (result.points.isNotEmpty) {
+        // handle points here
+      }
+
 
       if (result.points.isNotEmpty) {
         polylineCoordinates.clear();
@@ -348,6 +355,4 @@ class _GMapPageState extends State<GMapPage> {
       ),
     );
   }
-
-  DirectionsRequest({required PointLatLng origin, required PointLatLng destination, required TravelMode travelMode}) {}
 }
