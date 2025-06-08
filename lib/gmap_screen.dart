@@ -7,7 +7,6 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 // Replace with your actual API key here or import from constants.dart
 const String google_api_key = "AIzaSyCuJ95Ynset11JahQ96woXW5EM7S-d3BTo";
 const Color primaryColor = Color(0xFF7861FF);
@@ -19,7 +18,7 @@ class GMapPage extends StatefulWidget {
 
 class _GMapPageState extends State<GMapPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  late GoogleMapController _mapController;
+  // late GoogleMapController _mapController;
 
   LatLng _currentPosition = LatLng(18.420652, 73.905094);
   LatLng? sourceLocation;
@@ -49,18 +48,21 @@ class _GMapPageState extends State<GMapPage> {
   void getCurrentLocation() async {
     currentLocation = await location.getLocation();
 
-    GoogleMapController googleMapController = await _controller.future;
+    final GoogleMapController googleMapController = await _controller.future;
 
-    location.onLocationChanged.listen((newLoc) {
+    location.onLocationChanged.listen((newLoc) async {
       currentLocation = newLoc;
-      googleMapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            zoom: 15,
-            target: LatLng(newLoc.latitude!, newLoc.longitude!),
+      if (_controller.isCompleted) {
+        final controller = await _controller.future;
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              zoom: 15,
+              target: LatLng(newLoc.latitude!, newLoc.longitude!),
+            ),
           ),
-        ),
-      );
+        );
+      }
       if (mounted) {
         setState(() {});
       }
@@ -98,10 +100,11 @@ class _GMapPageState extends State<GMapPage> {
     if (sourceLocation != null && destination != null) {
       final polylinePoints = PolylinePoints();
 
-      final request = DirectionsRequest(
-        origin: PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
+      final request = PolylineRequest(
+        origin:
+            PointLatLng(sourceLocation!.latitude, sourceLocation!.longitude),
         destination: PointLatLng(destination!.latitude, destination!.longitude),
-        travelMode: TravelMode.driving,
+        mode: TravelMode.driving,
       );
 
       final result = await polylinePoints.getRouteBetweenCoordinates(
@@ -109,11 +112,9 @@ class _GMapPageState extends State<GMapPage> {
         request: request,
       );
 
-
       if (result.points.isNotEmpty) {
         // handle points here
       }
-
 
       if (result.points.isNotEmpty) {
         polylineCoordinates.clear();
@@ -161,13 +162,16 @@ class _GMapPageState extends State<GMapPage> {
   }
 
   void setCustomMarkerIcon() {
-    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/pin_source.png")
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration.empty, "assets/pin_source.png")
         .then((icon) => setState(() => sourceIcon = icon));
 
-    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/pin_destination.png")
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration.empty, "assets/pin_destination.png")
         .then((icon) => setState(() => destinationIcon = icon));
 
-    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/pmt_bus.png")
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration.empty, "assets/pmt_bus.png")
         .then((icon) => setState(() => currentLocationIcon = icon));
   }
 
@@ -209,15 +213,21 @@ class _GMapPageState extends State<GMapPage> {
         _currentPosition = LatLng(position.latitude, position.longitude);
       });
 
-      _mapController.animateCamera(
-        CameraUpdate.newLatLngZoom(_currentPosition, 15),
-      );
+      // Wait for the controller to be available
+      if (_controller.isCompleted) {
+        final controller = await _controller.future;
+        controller.animateCamera(
+          CameraUpdate.newLatLngZoom(_currentPosition, 15),
+        );
+      }
     }
   }
 
   void _onSearch() async {
-    sourceLocation = await _getCoordinatesFromAddress(sourceController.text.trim());
-    destination = await _getCoordinatesFromAddress(destinationController.text.trim());
+    sourceLocation =
+        await _getCoordinatesFromAddress(sourceController.text.trim());
+    destination =
+        await _getCoordinatesFromAddress(destinationController.text.trim());
 
     if (sourceLocation != null && destination != null) {
       getPolyPoints();
@@ -265,46 +275,50 @@ class _GMapPageState extends State<GMapPage> {
           currentLocation == null
               ? const Center(child: CircularProgressIndicator())
               : GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-              zoom: 15,
-            ),
-            polylines: polylines,
-            markers: {
-              Marker(
-                markerId: MarkerId("currentLocation"),
-                icon: currentLocationIcon,
-                position: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-              ),
-              if (sourceLocation != null)
-                Marker(
-                  markerId: MarkerId("source"),
-                  icon: sourceIcon,
-                  position: sourceLocation!,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(currentLocation!.latitude!,
+                        currentLocation!.longitude!),
+                    zoom: 15,
+                  ),
+                  polylines: polylines,
+                  markers: {
+                    Marker(
+                      markerId: MarkerId("currentLocation"),
+                      icon: currentLocationIcon,
+                      position: LatLng(currentLocation!.latitude!,
+                          currentLocation!.longitude!),
+                    ),
+                    if (sourceLocation != null)
+                      Marker(
+                        markerId: MarkerId("source"),
+                        icon: sourceIcon,
+                        position: sourceLocation!,
+                      ),
+                    if (destination != null)
+                      Marker(
+                        markerId: MarkerId("destination"),
+                        icon: destinationIcon,
+                        position: destination!,
+                      ),
+                  },
+                  onMapCreated: (controller) {
+                    // _mapController = controller;
+                    _controller.complete(controller);
+                  },
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
                 ),
-              if (destination != null)
-                Marker(
-                  markerId: MarkerId("destination"),
-                  icon: destinationIcon,
-                  position: destination!,
-                ),
-            },
-            onMapCreated: (controller) {
-              _mapController = controller;
-              _controller.complete(controller);
-            },
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-          ),
           Positioned(
             top: 30,
             left: 15,
             right: 15,
             child: Column(
               children: [
-                _buildTextField(sourceController, 'Enter source address', Icons.location_on),
+                _buildTextField(sourceController, 'Enter source address',
+                    Icons.location_on),
                 SizedBox(height: 10),
-                _buildTextField(destinationController, 'Enter destination address', Icons.location_pin),
+                _buildTextField(destinationController,
+                    'Enter destination address', Icons.location_pin),
                 SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -331,7 +345,8 @@ class _GMapPageState extends State<GMapPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, IconData icon) {
+  Widget _buildTextField(
+      TextEditingController controller, String hint, IconData icon) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
