@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationManager {
-  /// Checks if the monthly pass is about to expire (2 days left),
+  /// Checks if the monthly pass is about to expire or already expired,
   /// then adds a notification for the user.
   Future<String?> checkForExpiredPassesAndNotify() async {
     try {
@@ -28,16 +28,17 @@ class NotificationManager {
 
       final daysLeft = expiryDate.difference(now).inDays;
 
+      String? message;
+
       if (daysLeft == 2) {
-        final message = "Your bus pass will expire in 2 days.";
-
-        // Store notification under passHistory/{userId}/Notifications
-        await addNotificationWithTitle(uid, 'Pass Expiry', message);
-
-        return message;
+        message = "Your bus pass will expire in 2 days.";
+        await addNotificationWithTitle(uid, 'Pass Expiry Warning', message);
+      } else if (daysLeft <= 0) {
+        message = "Your bus pass has expired. Please renew to continue using the service.";
+        await addNotificationWithTitle(uid, 'Pass Expired', message);
       }
 
-      return null;
+      return message;
     } catch (e) {
       print('Error in checkForExpiredPassesAndNotify: $e');
       return null;
@@ -58,7 +59,7 @@ class NotificationManager {
         'title': title,
         'message': message,
         'timestamp': Timestamp.now(),
-        'read': false, // Mark new notification as unread
+        'read': false, // Mark as unread
       });
     } catch (e) {
       print('Error adding notification: $e');

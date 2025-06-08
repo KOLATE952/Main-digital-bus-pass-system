@@ -1,303 +1,122 @@
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-//
-// class UserProfileScreen extends StatefulWidget {
-//   const UserProfileScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   State<UserProfileScreen> createState() => _UserProfileScreenState();
-// }
-//
-// class _UserProfileScreenState extends State<UserProfileScreen> {
-//   final _formKey = GlobalKey<FormState>();
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//
-//   TextEditingController nameController = TextEditingController();
-//   TextEditingController emailController = TextEditingController();
-//   TextEditingController phoneController = TextEditingController();
-//
-//   String? selectedLanguage;
-//   bool isLoading = true;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadUserData();
-//     _loadLanguage();
-//   }
-//
-//   Future<void> _loadUserData() async {
-//     User? user = _auth.currentUser;
-//     if (user != null) {
-//       DocumentSnapshot snapshot = await FirebaseFirestore.instance
-//           .collection('users')
-//           .doc(user.uid)
-//           .get();
-//
-//       if (snapshot.exists) {
-//         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-//         nameController.text = data['name'] ?? '';
-//         emailController.text = data['email'] ?? '';
-//         phoneController.text = data['phone'] ?? '';
-//       }
-//     }
-//
-//     setState(() {
-//       isLoading = false;
-//     });
-//   }
-//
-//   Future<void> _loadLanguage() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     setState(() {
-//       selectedLanguage = prefs.getString('selected_language') ?? 'Not selected';
-//     });
-//   }
-//
-//   Future<void> _saveProfile() async {
-//     if (_formKey.currentState!.validate()) {
-//       User? user = _auth.currentUser;
-//       if (user != null) {
-//         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-//           'name': nameController.text,
-//           'email': emailController.text,
-//           'phone': phoneController.text,
-//         });
-//
-//         SharedPreferences prefs = await SharedPreferences.getInstance();
-//         await prefs.setString('selected_language', selectedLanguage ?? 'Not selected');
-//
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           const SnackBar(content: Text('Profile saved successfully')),
-//         );
-//       }
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Profile Info'),
-//         backgroundColor: Colors.teal,
-//       ),
-//       body: isLoading
-//           ? const Center(child: CircularProgressIndicator())
-//           : Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Form(
-//           key: _formKey,
-//           child: ListView(
-//             children: [
-//               TextFormField(
-//                 controller: nameController,
-//                 decoration: const InputDecoration(labelText: 'Name'),
-//                 validator: (value) =>
-//                 value == null || value.isEmpty ? 'Enter your name' : null,
-//               ),
-//               TextFormField(
-//                 controller: emailController,
-//                 decoration: const InputDecoration(labelText: 'Email'),
-//                 validator: (value) =>
-//                 value == null || value.isEmpty ? 'Enter your email' : null,
-//               ),
-//               TextFormField(
-//                 controller: phoneController,
-//                 decoration: const InputDecoration(labelText: 'Phone'),
-//                 validator: (value) =>
-//                 value == null || value.isEmpty ? 'Enter your phone' : null,
-//               ),
-//               const SizedBox(height: 20),
-//               DropdownButtonFormField<String>(
-//                 value: selectedLanguage,
-//                 items: ['English', 'Hindi', 'Marathi']
-//                     .map((lang) => DropdownMenuItem(
-//                   value: lang,
-//                   child: Text(lang),
-//                 ))
-//                     .toList(),
-//                 onChanged: (value) {
-//                   setState(() {
-//                     selectedLanguage = value!;
-//                   });
-//                 },
-//                 decoration: const InputDecoration(
-//                   labelText: 'Select Language',
-//                 ),
-//               ),
-//               const SizedBox(height: 20),
-//               ElevatedButton(
-//                 onPressed: _saveProfile,
-//                 style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-//                 child: const Text('Save Profile'),
-//               ),
-//               const SizedBox(height: 20),
-//               const Divider(),
-//               const Text("Saved Information:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-//               Text("Name: ${nameController.text}", style: const TextStyle(fontSize: 16)),
-//               Text("Email: ${emailController.text}", style: const TextStyle(fontSize: 16)),
-//               Text("Phone: ${phoneController.text}", style: const TextStyle(fontSize: 16)),
-//               Text("Selected Language: $selectedLanguage", style: const TextStyle(fontSize: 16)),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({Key? key}) : super(key: key);
+  final String uid;
+
+  const UserProfileScreen({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-
-  String? selectedLanguage;
+  String? email = '';
+  String? mobile = '';
+  String selectedLanguage = 'English'; // default
   bool isLoading = true;
+
+  // Language code to display name mapping
+  final Map<String, String> languageNames = {
+    'en': 'English',
+    'hi': 'Hindi',
+    'mr': 'Marathi',
+    'es': 'Spanish',
+    'fr': 'French',
+    // Add more language codes and names as you support them
+  };
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-    _loadLanguage();
+    fetchUserData();
+    loadSelectedLanguage();
   }
 
-  Future<void> _loadUserData() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+  Future<void> fetchUserData() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('users')
-          .doc(user.uid)
+          .doc(widget.uid)
           .get();
 
-      if (snapshot.exists) {
-        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        nameController.text = data['name'] ?? '';
-        emailController.text = data['email'] ?? '';
-        phoneController.text = data['phone'] ?? '';
-      }
-    }
-
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  Future<void> _loadLanguage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      selectedLanguage = prefs.getString('selected_language') ?? 'Not selected';
-    });
-  }
-
-  Future<void> _saveProfile() async {
-    if (_formKey.currentState!.validate()) {
-      User? user = _auth.currentUser;
-      if (user != null) {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'name': nameController.text,
-          'email': emailController.text,
-          'phone': phoneController.text,
+      if (doc.exists) {
+        setState(() {
+          email = doc['email'] ?? '';
+          mobile = doc['mobile'] ?? '';
         });
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('selected_language', selectedLanguage ?? 'Not selected');
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile saved successfully')),
-        );
-
-        setState(() {}); // Refresh the UI to show updated info
+      } else {
+        print("User document does not exist.");
       }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  Future<void> loadSelectedLanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String code = prefs.getString('selectedLanguageCode') ?? 'en'; // default 'en'
+    setState(() {
+      selectedLanguage = languageNames[code] ?? 'English'; // convert code to name
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Info'),
+        title: const Text('User Profile'),
         backgroundColor: Colors.teal,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Enter your name' : null,
-              ),
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Enter your email' : null,
-              ),
-              TextFormField(
-                controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Enter your phone' : null,
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: selectedLanguage == 'Not selected' ? null : selectedLanguage,
-                items: ['English', 'Hindi', 'Marathi']
-                    .map((lang) => DropdownMenuItem(
-                  value: lang,
-                  child: Text(lang),
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedLanguage = value!;
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Select Language',
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-                child: const Text('Save Profile'),
-              ),
-              const SizedBox(height: 20),
-              const Divider(),
-              const Text("Saved Information:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text("Name: ${nameController.text}", style: const TextStyle(fontSize: 16)),
-              Text("Email: ${emailController.text}", style: const TextStyle(fontSize: 16)),
-              Text("Phone: ${phoneController.text}", style: const TextStyle(fontSize: 16)),
-              Text("Selected Language: $selectedLanguage",
-                  style: const TextStyle(fontSize: 16)),
-            ],
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoRow('Email', email ?? 'Not available'),
+                const SizedBox(height: 10),
+                _buildInfoRow('Mobile', mobile ?? 'Not available'),
+                const SizedBox(height: 10),
+                _buildInfoRow('Language', selectedLanguage),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      children: [
+        Text(
+          '$label:',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 16),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }

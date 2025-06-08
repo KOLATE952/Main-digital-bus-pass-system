@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'notification_manager.dart';  // import your notification manager
+import 'notification_manager.dart'; // Import your NotificationManager
 
 class NotificationScreen extends StatefulWidget {
   NotificationScreen({Key? key}) : super(key: key);
@@ -22,7 +22,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   void _markNotificationsRead() async {
     await _notificationManager.markAllNotificationsAsRead();
-    // No setState needed because notifications will update in real-time via stream
   }
 
   @override
@@ -81,8 +80,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           return ListView.builder(
             itemCount: notifications.length,
             itemBuilder: (context, index) {
-              final data =
-              notifications[index].data() as Map<String, dynamic>?;
+              final data = notifications[index].data() as Map<String, dynamic>?;
 
               if (data == null) return const SizedBox();
 
@@ -125,7 +123,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 6.0),
                             child: Text(
-                              'Date: ${dateTime.toLocal()}',
+                              'Date: ${_formatDateTime(dateTime)}',
                               style: const TextStyle(
                                   fontSize: 12, color: Colors.grey),
                             ),
@@ -140,5 +138,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         },
       ),
     );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.day.toString().padLeft(2, '0')}/'
+        '${dateTime.month.toString().padLeft(2, '0')}/'
+        '${dateTime.year}  ${dateTime.hour.toString().padLeft(2, '0')}:'
+        '${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }
