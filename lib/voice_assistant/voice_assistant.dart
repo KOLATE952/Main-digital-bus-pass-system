@@ -103,7 +103,6 @@
 //   }
 // }
 
-
 // import 'package:flutter/material.dart';
 // import 'package:speech_to_text/speech_to_text.dart';
 //
@@ -132,48 +131,48 @@
 //     }
 //   }
 // }
-import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
+// import 'package:flutter/material.dart';
+// import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-class VoiceAssistant {
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
+// class VoiceAssistant {
+//   late stt.SpeechToText _speech;
+//   bool _isListening = false;
 
-  void init() async {
-    _speech = stt.SpeechToText();
-    bool available = await _speech.initialize(
-      onStatus: (status) => debugPrint('Speech status: $status'),
-      onError: (error) => debugPrint('Speech error: $error'),
-    );
+//   void init() async {
+//     _speech = stt.SpeechToText();
+//     bool available = await _speech.initialize(
+//       onStatus: (status) => debugPrint('Speech status: $status'),
+//       onError: (error) => debugPrint('Speech error: $error'),
+//     );
 
-    if (!available) {
-      debugPrint("Speech recognition not available.");
-    }
-  }
+//     if (!available) {
+//       debugPrint("Speech recognition not available.");
+//     }
+//   }
 
-  void startListening(BuildContext context) async {
-    if (!_isListening) {
-      _isListening = true;
-      await _speech.listen(
-        onResult: (result) {
-          String command = result.recognizedWords.toLowerCase();
-          debugPrint("Recognized command: $command");
+//   void startListening(BuildContext context) async {
+//     if (!_isListening) {
+//       _isListening = true;
+//       await _speech.listen(
+//         onResult: (result) {
+//           String command = result.recognizedWords.toLowerCase();
+//           debugPrint("Recognized command: $command");
 
-          // Example actions based on command
-          if (command.contains("ticket")) {
-            Navigator.pushNamed(context, '/viewTicket');
-          } else if (command.contains("map")) {
-            Navigator.pushNamed(context, '/map');
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Command not recognized")),
-            );
-          }
-        },
-      );
-    } else {
-      _speech.stop();
-      _isListening = false;
-    }
-  }
-}
+//           // Example actions based on command
+//           if (command.contains("ticket")) {
+//             Navigator.pushNamed(context, '/viewTicket');
+//           } else if (command.contains("map")) {
+//             Navigator.pushNamed(context, '/map');
+//           } else {
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               const SnackBar(content: Text("Command not recognized")),
+//             );
+//           }
+//         },
+//       );
+//     } else {
+//       _speech.stop();
+//       _isListening = false;
+//     }
+//   }
+// }
