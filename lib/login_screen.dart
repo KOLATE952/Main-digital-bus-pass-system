@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
         showSnackBar("Login Successful");
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('userid', userCredential.user!.uid);
+        await prefs.setString('userId', userCredential.user!.uid);
 
         Navigator.pushAndRemoveUntil(
           context,
@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onLanguageSelected: widget.onLanguageChange ?? (locale) {},
             ),
           ),
-              (route) => false,
+          (route) => false,
         );
       }
     } catch (e) {
