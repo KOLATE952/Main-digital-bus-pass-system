@@ -1,0 +1,2 @@
+C:/Users/sanga/StudioProjects/finalyearproject/android/app/.cxx/Debug/v6s2g6z1/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/sanga/StudioProjects/finalyearproject/android/app/.cxx/Debug/v6s2g6z1/x86_64/CMakeFiles/rebuild_cache.dir

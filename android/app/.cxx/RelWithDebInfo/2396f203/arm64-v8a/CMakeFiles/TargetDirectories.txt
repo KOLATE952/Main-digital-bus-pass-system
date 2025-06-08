@@ -1,0 +1,2 @@
+C:/Users/sanga/StudioProjects/finalyearproject/android/app/.cxx/RelWithDebInfo/2396f203/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/sanga/StudioProjects/finalyearproject/android/app/.cxx/RelWithDebInfo/2396f203/arm64-v8a/CMakeFiles/rebuild_cache.dir
